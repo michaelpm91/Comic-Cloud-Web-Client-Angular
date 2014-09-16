@@ -19,13 +19,13 @@
 ## Rewrite everything else to index.html to allow html5 state links
 #RewriteRule ^ index.html [L]
 
-<ifModule mod_rewrite.c>
-
-    RewriteEngine On
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_URI} !index
-    RewriteRule (.*) index.html [L]
-</ifModule>
+#<ifModule mod_rewrite.c>
+#
+#    RewriteEngine On
+#    RewriteCond %{REQUEST_FILENAME} !-f
+#    RewriteCond %{REQUEST_FILENAME} !-d
+#    RewriteCond %{REQUEST_URI} !index
+#    RewriteRule (.*) index.html [L]
+#</ifModule>
 
 #http://dev.atomichael.com/Comic-Cloud-Client/app/library
