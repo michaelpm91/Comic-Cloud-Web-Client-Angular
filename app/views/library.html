@@ -1,6 +1,6 @@
 <div id="library">
     <div data-ng-repeat="thisSeries in series">
-        <img ng-src="http://api.comiccloud.io{{thisSeries.comic_collection[1]}}/thumbnail">
-        <h1>issue:{{thisSeries.comic_issue}}</h1>
+        <img ng-src="http://api.comiccloud.io{{thisSeries.comics[0].comic_collection[1]}}/thumbnail">
+        <h1>{{thisSeries.series_title (thisSeries.series_start_year)}}</h1>
     </div>
 </div>
