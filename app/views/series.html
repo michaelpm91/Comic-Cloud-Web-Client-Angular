@@ -1,0 +1,9 @@
+<div id="series" class="comicDisplay">
+    <a ng-href="c/{{comic.id}}" data-ng-repeat="comic in comics.comics">
+        <div class='comicBlock'>
+            <img ng-src="http://api.comiccloud.io{{comic.comic_collection[1]}}/thumbnail">
+
+            <div class='comicBlockInformation'> #{{comic.comic_issue}}</div>
+        </div>
+    </a>
+</div>

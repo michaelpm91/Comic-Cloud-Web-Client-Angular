@@ -16,10 +16,22 @@ comiccloudapp.config(function ($routeProvider, $locationProvider) {
         .when('/library', {
             templateUrl: './views/library.html',
             controller: 'LibraryController'
+        })
+        .when('/s/:id', {
+            templateUrl: './views/series.html',
+            controller: 'SeriesController'
+        })
+        .when('/c/:id', {
+            templateUrl: './views/comic.html',
+            controller: 'ComicController'
+        })
+        .when('/login', {
+            templateUrl: './views/login.html',
+            controller: 'LoginController'
+        })
+        .otherwise({
+            redirectTo: '/library'
         });
-        /*.otherwise({
-            redirectTo: '/scoop'
-        });*/
     // use the HTML5 History API
     $locationProvider.html5Mode(true);
 });

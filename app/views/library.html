@@ -1,6 +1,9 @@
-<div id="library">
-    <div data-ng-repeat="thisSeries in series">
-        <img ng-src="http://api.comiccloud.io{{thisSeries.comics[0].comic_collection[1]}}/thumbnail">
-        <h1>{{thisSeries.series_title}} ({{thisSeries.series_start_year}})</h1>
-    </div>
+<div id="library" class="comicDisplay">
+    <a ng-href="s/{{thisSeries.id}}" data-ng-repeat="thisSeries in series">
+        <div class='comicBlock'>
+            <img ng-src="http://api.comiccloud.io{{thisSeries.comics[0].comic_collection[1]}}/thumbnail">
+
+            <div class='comicBlockInformation'>{{thisSeries.series_title}} ({{thisSeries.series_start_year}})</div>
+        </div>
+    </a>
 </div>

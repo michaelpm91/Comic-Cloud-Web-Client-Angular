@@ -27,4 +27,6 @@ angular.module('comicCloudClient')
                         $scope.status = 'Unable to load customer data: ' + error.message;
                     });
             }
-        }]);
+        }
+    ]
+);
