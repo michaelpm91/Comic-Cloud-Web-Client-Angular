@@ -4,9 +4,11 @@
 'use strict';
 
 angular.module('comicCloudClient')
-    .controller('SeriesController', ['$scope', '$routeParams', 'dataFactory',
-        function ($scope, $routeParams, dataFactory) {
-
+    .controller('SeriesController', ['$cookies', '$location', '$scope', '$routeParams', 'dataFactory',
+        function ($cookies, $location, $scope, $routeParams, dataFactory) {
+            if(!$cookies.access_token){
+                $location.path('/login');
+            }
             $scope.comics;
 
             getSeries($routeParams.id);

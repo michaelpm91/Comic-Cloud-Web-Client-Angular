@@ -11,9 +11,11 @@
  * Controller of the comicCloudClientApp
  */
 angular.module('comicCloudClient')
-    .controller('LibraryController', ['$scope', 'dataFactory',
-        function ($scope, dataFactory) {
-
+    .controller('LibraryController', ['$cookies', '$location','$scope', 'dataFactory',
+        function ($cookies, $location, $scope, dataFactory) {
+            if(!$cookies.access_token){
+                $location.path('/login');
+            }
             $scope.series;
 
             getAllSeries();

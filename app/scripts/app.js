@@ -35,56 +35,58 @@ comiccloudapp.config(function ($routeProvider, $locationProvider) {
     // use the HTML5 History API
     $locationProvider.html5Mode(true);
 });
-comiccloudapp.factory('dataFactory', ['$http', function ($http) {
+comiccloudapp.factory('dataFactory', ['$http', '$cookies', function ($http, $cookies) {
 
-    var urlBase = 'http://api.comiccloud.io/0.1';
+    //var urlBase = 'http://api.comiccloud.io/0.1';
+    var urlBase = 'http://dev.atomichael.com/Comic-Cloud-API/api/v1';
     var comicEndPoint = urlBase + '/comic';
     var seriesEndPoint = urlBase + '/series';
     var dataFactory = {};
 
-    $http.defaults.headers.common.Authorization = 'Basic ' + btoa('user1:1234');
+    //$http.defaults.headers.common.Authorization = 'Basic ' + btoa('user1:1234');
+    var access_token = "?access_token=" + $cookies.access_token;
 
     /*Comic Resource Request*/
     dataFactory.getComics = function () {
-        return $http.get(comicEndPoint);
+        return $http.get(comicEndPoint + access_token);
     };
 
     dataFactory.getComic = function (id) {
-        return $http.get(comicEndPoint + "/" + id);
+        return $http.get(comicEndPoint + "/" + id + access_token);
     };
 
     dataFactory.insertComic = function (comic) {
-        return $http.post(comicEndPoint, comic);
+        return $http.post(comicEndPoint + access_token, comic);
     };
 
     dataFactory.updateComic = function (comic) {
-        return $http.put(comicEndPoint + "/" + comic.id, comic)
+        return $http.put(comicEndPoint + "/" + comic.id + access_token, comic)
     };
 
     dataFactory.deleteComic = function (id) {
-        return $http.delete(comicEndPoint + "/" + id);
+        return $http.delete(comicEndPoint + "/" + id + access_token);
     };
     /*Comic Resource Request End*/
 
     /*Series Resource Request*/
     dataFactory.getAllSeries = function () {
-        return $http.get(seriesEndPoint);
+        return $http.get(seriesEndPoint + access_token);
     };
 
     dataFactory.getSeries = function (id) {
-        return $http.get(seriesEndPoint + "/" + id);
+        return $http.get(seriesEndPoint + "/" + id + access_token);
     };
 
     dataFactory.insertSeries = function (series) {
-        return $http.post(seriesEndPoint, series);
+        return $http.post(seriesEndPoint + access_token, series);
     };
 
     dataFactory.updateSeries = function (series) {
-        return $http.put(seriesEndPoint + "/" + seires.id, series)
+        return $http.put(seriesEndPoint + "/" + seires.id + access_token, series)
     };
 
     dataFactory.deleteSeries = function (id) {
-        return $http.delete(seriesEndPoint + "/" + id);
+        return $http.delete(seriesEndPoint + "/" + id + access_token);
     };
     /*Series Resource Request End*/
 

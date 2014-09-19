@@ -1,11 +1,10 @@
 <div id="login">
     <div id="loginBox">
-        <div style="
-font-size: 42px;
-padding-top: 28px;
-position: relative;">Comic Cloud</div>
-        <input>
-        <input>
-        <button type="button">Login</button>
-    </div>
+        <div style="font-size: 42px;padding-top: 28px;position: relative;">Comic Cloud</div>
+		<form>
+			<input ng-model="user.email">
+        	<input type="password" ng-model="user.password">
+        	<button ng-click="submit(user)"type="button">Login</button>
+    	</form>
+	</div>
 </div>

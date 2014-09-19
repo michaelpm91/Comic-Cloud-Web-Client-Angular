@@ -10,9 +10,11 @@
  * Controller of the comicCloudClientApp
  */
 angular.module('comicCloudClient')
-    .controller('ComicController', ['$scope', '$routeParams', 'dataFactory',
-        function ($scope, $routeParams, dataFactory) {
-
+    .controller('ComicController', ['$cookies', '$location', '$scope', '$routeParams', 'dataFactory',
+        function ($cookies, $location, $scope, $routeParams, dataFactory) {
+            if(!$cookies.access_token){
+                $location.path('/login');
+            }
             $scope.comic;
 
             getComic($routeParams.id);
