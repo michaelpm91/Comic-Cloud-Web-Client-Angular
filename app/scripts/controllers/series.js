@@ -4,22 +4,15 @@
 'use strict';
 
 angular.module('comicCloudClient')
-    .controller('SeriesController', ['$cookies', '$location', '$scope', '$routeParams', 'dataFactory',
-        function ($cookies, $location, $scope, $routeParams, dataFactory) {
+    .controller('SeriesController', ['$cookies', '$http', '$location', '$scope', '$rootScope', '$routeParams', 'Series',
+        function ($cookies, $http, $location, $scope, $rootScope, $routeParams, Series) {
             if(!$cookies.access_token){
                 $location.path('/login');
             }
-            $scope.comics;
-
-            getSeries($routeParams.id);
-
-            function getSeries(val) {
-                dataFactory.getSeries(val)
-                    .success(function (series) {
-                        $scope.comics = series.series;
-                    })
-                    .error(function (error) {
-                        $scope.status = 'Unable to load customer data: ' + error.message;
-                    });
-            }
+            $http.defaults.headers.common.Authorization = $cookies.access_token;
+            $scope.cookies = $cookies;
+            $scope.series;
+            var series = Series.get({ id: $routeParams.id }, function() {
+                $scope.series = series.series;
+            });
         }]);

@@ -1,12 +1,13 @@
 body {
     background: #F5F5F5;
     font-family: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue", Calibri, Helvetica, Arial;
+    margin: 0;
 }
 #library {
 
 }
 .comicDisplay{
-    width:85%;
+    width:80%;/*85%*/
     margin: 50px auto;
 }
 .comicBlock{
@@ -20,7 +21,18 @@ body {
     margin-right: 1%;
     display: inline-block;
 
-    width:23%;
+    width:22.6%;
+}
+.comicPage{
+    display: none;
+    margin: 0 auto;
+    height: 100%;
+}
+#comicReader{
+    height: 100%;
+}
+.comicPage.active{
+    display:block;
 }
 .comicBlock img {
     width: 95%;
@@ -60,4 +72,17 @@ body {
     width: 260px;
     margin-top: 10px;
     height: 32px;
+}
+progress{
+    display: none;
+}
+progress[value] {
+    /* Reset the default appearance */
+    -webkit-appearance: none;
+    appearance: none;
+
+    height: 20px;
+}
+.position-fixed {
+    position: fixed;
 }

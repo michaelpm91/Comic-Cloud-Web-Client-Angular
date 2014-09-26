@@ -4,12 +4,12 @@
 'use strict';
 
 angular.module('comicCloudClient')
-    .controller('LoginController', ['$location', '$cookies','$http','$scope', 'dataFactory',
-        function ($location, $cookies, $http, $scope, dataFactory) {
+    .controller('LoginController', ['$location', '$cookies','$http','$scope',
+        function ($location, $cookies, $http, $scope) {
 			$scope.submit = function(user){
 				//var data = ['grant_type' => 'password', 'client_id' => '1', 'client_secret' => 'secret'];
 				//user.push.apply(user, data);
-                var param = function(obj) {
+                /*var param = function(obj) {
                     var query = '', name, value, fullSubName, subName, subValue, innerObj, i;
 
                     for(name in obj) {
@@ -43,19 +43,20 @@ angular.module('comicCloudClient')
                 // Override $http service's default transformRequest
                 $http.defaults.transformRequest = [function(data) {
                     return angular.isObject(data) && String(data) !== '[object File]' ? param(data) : data;
-                }];
+                }];*/
+
                 var data = {
                     'grant_type' : 'password',
-                    'client_id' : 'defo',
-                    'client_secret' : 'mega_secret',
+                    'client_id' : '1',
+                    'client_secret' : 'secret',
                     'username' : user.email,
                     'password' : user.password
                 };
-                console.log(data.client_secret);
+
 				$http({
 					method  : 'POST',
 					url     : 'http://dev.atomichael.com/Comic-Cloud-API/oauth/access_token',
-					data    : data,
+					data    : $.param(data),
 					headers : { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }
 				})
 				.success(function(data) {

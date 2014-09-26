@@ -9,9 +9,10 @@ var comiccloudapp = angular.module('comicCloudClient', [
     'ngResource',
     'ngRoute',
     'ngSanitize',
-    'ngTouch'
+    'ngTouch',
+    'angularFileUpload'
 ]);
-comiccloudapp.config(function ($routeProvider, $locationProvider) {
+comiccloudapp.config(function ($routeProvider, $locationProvider, $httpProvider) {
     $routeProvider
         .when('/library', {
             templateUrl: './views/library.html',
@@ -34,61 +35,51 @@ comiccloudapp.config(function ($routeProvider, $locationProvider) {
         });
     // use the HTML5 History API
     $locationProvider.html5Mode(true);
+
 });
-comiccloudapp.factory('dataFactory', ['$http', '$cookies', function ($http, $cookies) {
 
-    //var urlBase = 'http://api.comiccloud.io/0.1';
-    var urlBase = 'http://dev.atomichael.com/Comic-Cloud-API/api/v1';
-    var comicEndPoint = urlBase + '/comic';
-    var seriesEndPoint = urlBase + '/series';
-    var dataFactory = {};
-
-    //$http.defaults.headers.common.Authorization = 'Basic ' + btoa('user1:1234');
-    var access_token = "?access_token=" + $cookies.access_token;
-
-    /*Comic Resource Request*/
-    dataFactory.getComics = function () {
-        return $http.get(comicEndPoint + access_token);
-    };
-
-    dataFactory.getComic = function (id) {
-        return $http.get(comicEndPoint + "/" + id + access_token);
-    };
-
-    dataFactory.insertComic = function (comic) {
-        return $http.post(comicEndPoint + access_token, comic);
-    };
-
-    dataFactory.updateComic = function (comic) {
-        return $http.put(comicEndPoint + "/" + comic.id + access_token, comic)
-    };
-
-    dataFactory.deleteComic = function (id) {
-        return $http.delete(comicEndPoint + "/" + id + access_token);
-    };
-    /*Comic Resource Request End*/
-
-    /*Series Resource Request*/
-    dataFactory.getAllSeries = function () {
-        return $http.get(seriesEndPoint + access_token);
-    };
-
-    dataFactory.getSeries = function (id) {
-        return $http.get(seriesEndPoint + "/" + id + access_token);
-    };
-
-    dataFactory.insertSeries = function (series) {
-        return $http.post(seriesEndPoint + access_token, series);
-    };
-
-    dataFactory.updateSeries = function (series) {
-        return $http.put(seriesEndPoint + "/" + seires.id + access_token, series)
-    };
-
-    dataFactory.deleteSeries = function (id) {
-        return $http.delete(seriesEndPoint + "/" + id + access_token);
-    };
-    /*Series Resource Request End*/
-
-    return dataFactory;
+comiccloudapp.run(function($rootScope) {
+    $rootScope.urlBase = 'http://dev.atomichael.com/Comic-Cloud-API/api/v1';
+    //$rootScope.urlBase = 'http://api.comiccloud.io/0.1';
+});
+comiccloudapp.factory('Series', ['$resource', '$cookies', '$rootScope', function($resource, $cookies, $rootScope) {
+    var urlBase = $rootScope.urlBase +'/series/:id';//'http://api.comiccloud.io/0.1/series/:id';
+    return $resource(urlBase);
 }]);
+comiccloudapp.factory('Comic', ['$resource', '$cookies', '$rootScope', function($resource, $cookies, $rootScope) {
+    var urlBase = $rootScope.urlBase + '/comic/:id';//'http://api.comiccloud.io/0.1/comic/:id';
+    return $resource(urlBase);
+}]);
+comiccloudapp.filter('object2Array', function() {
+    return function(input) {
+        var out = [];
+        for(var i in input){
+            out.push(input[i]);
+        }
+        return out;
+    }
+});
+comiccloudapp.factory('comicFunctions', function () {
+    return {
+        genID: function () {
+            var text = "";
+            var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+            for( var i=0; i < 40; i++ )
+                text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+            return text;
+        }
+    }
+});
+comiccloudapp.directive('ngRightClick', function($parse) {
+    return function(scope, element, attrs) {
+        var fn = $parse(attrs.ngRightClick);
+        element.bind('contextmenu', function(event) {
+            scope.$apply(function() {
+                event.preventDefault();
+                fn(scope, {$event:event});
+            });
+        });
+    };
+});
