@@ -4,20 +4,46 @@
 'use strict';
 
 angular.module('comicCloudClient')
-    .controller('LibraryController', ['$cookies','$http', '$location','$scope', '$rootScope', '$upload', 'Series', 'comicFunctions',
-        function ($cookies, $http, $location, $scope, $rootScope, $upload, Series, comicFunctions) {
+    .controller('LibraryController', ['$cookies','$http', '$location','$scope', '$rootScope', '$upload', '$document', '$compile', 'ngDialog', 'Series', 'comicFunctions',
+        function ($cookies, $http, $location, $scope, $rootScope, $upload, $document, $compile, ngDialog, Series, comicFunctions) {
             if(!$cookies.access_token){
                 return $location.path('/login');
             }
             $http.defaults.headers.common.Authorization = $cookies.access_token;
             $scope.cookies = $cookies;
+            $scope.targetId;
             $scope.series;
+            $scope.currentUploads = {};
             var series = Series.get(function(){
                 $scope.series = series.series;
             });
+            $scope.test = function () {
+                console.log('yo');
+            }
+            $scope.openEditModal = function(){
+                ngDialog.open({
+                    template: './views/directives/editModal.html',
+                    scope: $scope
+                });
+            }
 
-            $scope.menu = function(){
-                console.log('right click');
+            $scope.openDeleteModal = function () {
+                console.log($scope.targetSeries);
+                ngDialog.open({
+                    template: './views/directives/deleteModal.html',
+                    scope: $scope,
+                    data : {
+                        type : 'series'
+                    }
+                });
+            };
+            $scope.deleteThis = function(seriesId) {
+                Series.delete({id:seriesId}, function(){
+                    console.log('Series ' + seriesId + ' deleted.');
+                    angular.element('#series_' + seriesId).fadeOut(function(){
+                        this.remove();
+                    });
+                });
             }
 
             $scope.onFileSelect = function($files) {
@@ -34,7 +60,7 @@ angular.module('comicCloudClient')
                     var added = false;
                     var exists = false;
                     var continueLoop = true;
-                    angular.forEach(angular.element('.comicBlock'), function(ele){
+                    angular.forEach(angular.element('.comicContainer'), function(ele){
                         var existingSeries = angular.element(ele).data('series-title');
                         if(continueLoop) {
                             if (seriesTitle.toUpperCase() == existingSeries.toUpperCase()) {
@@ -45,8 +71,16 @@ angular.module('comicCloudClient')
                                 return continueLoop = false;
                             }
                             if (seriesTitle.toUpperCase() < existingSeries.toUpperCase()) {
-                                //$(item).parent('a').before("<a title='" + seriesTitle + "' data-series-name='" + matchName + "' data-series-id='" + series_id + "'><div class='comicCard'><img src='http://placehold.it/185x287'><progress id='" + series_id + "' value='0' max='100'></progress><p>" + matchName + " (" + startYear + ")</p></div></a>");
-                                angular.element(ele).before("<div class='comicBlock'><img src='http://placehold.it/185x287'/><div class='comicBlockInformation'>" + seriesTitle + " (0000)</div></div>");
+                                angular.element(ele).before($compile("<div class='comicRow'><div data-comic-card data-image-url=\"'http://placehold.it\/185x287'\" class='comicContainer' data-information=\"'" + seriesTitle + " (0000)'\"></div></div>")($scope));
+                                /*<div data-comic-card
+                                data-url="'s/' + thisSeries.id"
+                                data-information="thisSeries.series_title +' (' + thisSeries.series_start_year +')'"
+                                data-image-url="$root.urlBase + thisSeries.comics[0].comic_collection[1] + '/thumbnail?access_token=' + cookies.access_token"
+                                data-series-title='{{thisSeries.series_title}}'
+                                data-series-id="{{thisSeries.id}}"
+                                ng-right-click="{{thisSeries.id}}"
+                                class="comicContainer">
+                                </div>*/
                                 added = true;
                                 console.log('new and added before ' + existingSeries);
                                 return continueLoop = false;
@@ -54,7 +88,7 @@ angular.module('comicCloudClient')
                         }
                     });
                     if(!added && !exists){
-                        angular.element('#library').append("<div class='comicBlock'><img src='http://placehold.it/230x350'/><div class='comicBlockInformation'>" + seriesTitle + " (0000)</div></div>");
+                        angular.element('#library').append($compile("<div class='comicRow'><div data-comic-card data-image-url=\"'http://placehold.it\/185x287'\" class='comicContainer' data-information=\"'" + seriesTitle + " (0000)'\"></div></div>")($scope));
                         console.log('new and added at the end');
                     }
 

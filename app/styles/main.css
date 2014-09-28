@@ -9,18 +9,24 @@ body {
 .comicDisplay{
     width:80%;/*85%*/
     margin: 50px auto;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 .comicBlock{
-    vertical-align: top;
     background: white;
     box-shadow: 0 1px 2px #DCDCDC;
-/*}
-.block{*/
+    padding-top: 2%;
+}
+.comicRow{
+    vertical-align: top;
     margin-bottom: 25px;
     margin-left: 1%;
     margin-right: 1%;
     display: inline-block;
-
     width:22.6%;
 }
 .comicPage{
@@ -38,7 +44,7 @@ body {
     width: 95%;
     height: auto;
     display: block;
-    margin-top: 2.5%;
+    /*margin-top: 2.5%;*/
     margin-left: auto;
     margin-right: auto;
 }
@@ -83,6 +89,58 @@ progress[value] {
 
     height: 20px;
 }
+/*.comicContextMenu{
+    background-color: white;
+    width:150px;
+    height:200px;
+    display:none;
+    position:absolute;
+}
 .position-fixed {
     position: fixed;
+}*/
+#comicContextMenu{
+    position: fixed;
+}
+.open>.menu{
+    display: block;
+}
+.menu{
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    float: left;
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    list-style: none;
+    font-size: 14px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0,0,0,.15);
+    /*border-radius: 4px;*/
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    background-clip: padding-box;
+
+}
+.menu>li>a {
+    display: block;
+    padding: 3px 20px;
+    clear: both;
+    font-weight: 400;
+    line-height: 1.42857143;
+    color: #333;
+    white-space: nowrap;
+}
+.menu>li>a:hover, .menu>li>a:focus {
+    text-decoration: none;
+    color: #262626;
+    background-color: #f5f5f5;
+}
+.menu>li>a:hover, .menu>li>a:focus {
+    text-decoration: none;
+    color: #262626;
+    background-color: #f5f5f5;
 }

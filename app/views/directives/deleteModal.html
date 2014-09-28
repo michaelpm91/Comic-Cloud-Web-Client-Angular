@@ -1,0 +1,7 @@
+<div class="ngdialog-message">
+    <h3>Are you sure you want to delete this {{ngDialogData.type}}?</h3>
+</div>
+<div class="ngdialog-buttons">
+    <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog()">Cancel</button>
+    <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="deleteThis('{{targetId}}'); closeThisDialog()">Delete</button>
+</div>
