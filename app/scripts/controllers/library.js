@@ -65,22 +65,13 @@ angular.module('comicCloudClient')
                         if(continueLoop) {
                             if (seriesTitle.toUpperCase() == existingSeries.toUpperCase()) {
                                 exists = true;
-                                //angular.element(ele).after("<div class='comicBlock'><div class='comicBlockInformation'></div></div>");
                                 console.log('exists');
                                 seriesID = angular.element(ele).data('series-id');
                                 return continueLoop = false;
                             }
                             if (seriesTitle.toUpperCase() < existingSeries.toUpperCase()) {
-                                angular.element(ele).before($compile("<div class='comicRow'><div data-comic-card data-image-url=\"'http://placehold.it\/185x287'\" class='comicContainer' data-information=\"'" + seriesTitle + " (0000)'\"></div></div>")($scope));
-                                /*<div data-comic-card
-                                data-url="'s/' + thisSeries.id"
-                                data-information="thisSeries.series_title +' (' + thisSeries.series_start_year +')'"
-                                data-image-url="$root.urlBase + thisSeries.comics[0].comic_collection[1] + '/thumbnail?access_token=' + cookies.access_token"
-                                data-series-title='{{thisSeries.series_title}}'
-                                data-series-id="{{thisSeries.id}}"
-                                ng-right-click="{{thisSeries.id}}"
-                                class="comicContainer">
-                                </div>*/
+                                var html = "<div class='comicRow'><div data-comic-card data-image-url=\"'http://placehold.it\/185x287'\" class='comicContainer' data-series-id='" + seriesID + "' data-series-title='" + seriesTitle + "' data-information=\"'" + seriesTitle + " (0000)'\"></div></div>";
+                                angular.element(ele).parent().before($compile(angular.element(html).hide().fadeIn().css("display","inline-block"))($scope));
                                 added = true;
                                 console.log('new and added before ' + existingSeries);
                                 return continueLoop = false;
@@ -88,7 +79,8 @@ angular.module('comicCloudClient')
                         }
                     });
                     if(!added && !exists){
-                        angular.element('#library').append($compile("<div class='comicRow'><div data-comic-card data-image-url=\"'http://placehold.it\/185x287'\" class='comicContainer' data-information=\"'" + seriesTitle + " (0000)'\"></div></div>")($scope));
+                        var html = "<div class='comicRow'><div data-comic-card data-image-url=\"'http://placehold.it\/185x287'\" class='comicContainer' data-series-id='" + seriesID + "' data-series-title='" + seriesTitle + "' data-information=\"'" + seriesTitle + " (0000)'\"></div></div>";
+                        angular.element($compile(html)($scope)).hide().appendTo('#library').fadeIn();
                         console.log('new and added at the end');
                     }
 

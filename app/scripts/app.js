@@ -85,6 +85,12 @@ comiccloudapp.directive('comicCard', function(){
         templateUrl: "./views/directives/comicCard.html"
     };
 });
+comiccloudapp.directive('mainMenu', function(){
+    return {
+        restrict: 'A',
+        templateUrl: "./views/directives/mainMenu.html"
+    };
+});
 comiccloudapp.directive('ngRightClick', ['$document', function($document, $parse) {
     return {
         restrict: 'A',
