@@ -1,0 +1,17 @@
+<div class="ngdialog-message">
+    <h4>Edit {{ngDialogData.type}}</h4>
+    <table>
+        <tr>
+            <td>Title</td>
+            <td class="ngdialog-input"><input  type="text"/></td>
+        </tr>
+        <tr>
+            <td>Year</td>
+            <td class="ngdialog-input"><input  type="text"/>{{}}</td>
+        </tr>
+    </table>
+</div>
+<div class="ngdialog-buttons">
+    <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog()">Cancel</button>
+    <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="saveThis('{{targetId}}'); closeThisDialog()">Save Changes</button>
+</div>

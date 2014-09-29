@@ -11,7 +11,6 @@ var comiccloudapp = angular.module('comicCloudClient', [
     'ngSanitize',
     'ngTouch',
     'angularFileUpload',
-    'ng-context-menu',
     'ngDialog'
 ]);
 comiccloudapp.config(function ($routeProvider, $locationProvider, $httpProvider) {
@@ -82,14 +81,28 @@ comiccloudapp.directive('comicCard', function(){
             url : '=url',
             information : '=information'
         },
-        templateUrl: "./views/directives/comicCard.html"
+        templateUrl: "./views/partials/comicCard.html"
     };
 });
 comiccloudapp.directive('mainMenu', function(){
     return {
         restrict: 'A',
-        templateUrl: "./views/directives/mainMenu.html"
+        templateUrl: "./views/partials/mainMenu.html"
     };
+});
+comiccloudapp.factory('menuState', function(){
+	var state = false;
+	return{
+		state: function() { return state; },
+		setState: function(newState) { state = newState }
+	};
+});
+comiccloudapp.factory('page', function() {
+	var title = 'default';
+	return {
+		title: function() { return title; },
+		setTitle: function(newTitle) { title = newTitle }
+   };
 });
 comiccloudapp.directive('ngRightClick', ['$document', function($document, $parse) {
     return {

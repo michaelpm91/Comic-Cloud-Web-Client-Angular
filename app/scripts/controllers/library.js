@@ -4,11 +4,17 @@
 'use strict';
 
 angular.module('comicCloudClient')
-    .controller('LibraryController', ['$cookies','$http', '$location','$scope', '$rootScope', '$upload', '$document', '$compile', 'ngDialog', 'Series', 'comicFunctions',
-        function ($cookies, $http, $location, $scope, $rootScope, $upload, $document, $compile, ngDialog, Series, comicFunctions) {
+    .controller('LibraryController', ['$cookies','$http', '$location','$scope', '$rootScope', '$upload', '$document', '$compile', 'ngDialog', 'Series', 'comicFunctions', 'menuState',
+        function ($cookies, $http, $location, $scope, $rootScope, $upload, $document, $compile, ngDialog, Series, comicFunctions, menuState) {
             if(!$cookies.access_token){
                 return $location.path('/login');
             }
+
+            /*$scope.showMenuIcon = function(){
+                return true;
+            }*/
+			menuState.setState(true);
+
             $http.defaults.headers.common.Authorization = $cookies.access_token;
             $scope.cookies = $cookies;
             $scope.targetId;
@@ -22,15 +28,19 @@ angular.module('comicCloudClient')
             }
             $scope.openEditModal = function(){
                 ngDialog.open({
-                    template: './views/directives/editModal.html',
-                    scope: $scope
+                    template: './views/partials/editModal.html',
+                    scope: $scope,
+                    data : {
+                        type : 'series'
+                    },
+                    closeByDocument: false
                 });
             }
 
             $scope.openDeleteModal = function () {
                 console.log($scope.targetSeries);
                 ngDialog.open({
-                    template: './views/directives/deleteModal.html',
+                    template: './views/partials/deleteModal.html',
                     scope: $scope,
                     data : {
                         type : 'series'
