@@ -3,13 +3,14 @@
  */
 
 angular.module('comicCloudClient')
-    .controller('ComicController', ['$cookies', '$http', '$location', '$scope', '$routeParams', 'Comic',
-        function ($cookies, $http, $location, $scope, $routeParams, Comic) {
+    .controller('ComicController',
+        function ($cookies, $http, $location, $scope, $routeParams, Comic, env_var) {
             if(!$cookies.access_token){
                 $location.path('/login');
             }
             $http.defaults.headers.common.Authorization = $cookies.access_token;
             $scope.cookies = $cookies;
+            $scope.env_var = env_var;
             $scope.comic;
             var comic = Comic.get({ id: $routeParams.id }, function() {
                 $scope.comic = comic.comic;
@@ -22,5 +23,4 @@ angular.module('comicCloudClient')
                 console.log(page);
             }
         }
-    ]
 );

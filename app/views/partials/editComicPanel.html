@@ -1,0 +1,22 @@
+<table>
+    <tr>
+        <td style="border-bottom: 1px solid #DCDCDC;">
+            <h2>Edit Comic</h2>
+        </td>
+    </tr>
+    <tr>
+        <td>Issue #</td>
+    </tr>
+    <tr>
+        <td><input ng-model="comicUpdate.issueNumber"><input ng-model="comicUpdate.comic_id" type="hidden"></td>
+    </tr>
+    <tr>
+        <td>Writer(s)</td>
+    </tr>
+    <tr>
+        <td><input ng-model="comicUpdate.comicWriter"></td>
+    </tr>
+    <tr>
+        <td><button ng-click="editThis(comicUpdate)">Update</button><button ng-click="closeEditModal()">Cancel</button></td>
+    </tr>
+</table>

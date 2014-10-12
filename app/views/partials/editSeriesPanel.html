@@ -1,0 +1,28 @@
+<table>
+    <tr>
+        <td style="border-bottom: 1px solid #DCDCDC;">
+            <h2>Edit Series</h2>
+        </td>
+    </tr>
+    <tr>
+        <td>Title</td>
+    </tr>
+    <tr>
+        <td><input ng-model="seriesUpdate.title"><input ng-model="seriesUpdate.series_id" type="hidden" value="{{targetSeriesId}}"></td>
+    </tr>
+    <tr>
+        <td>Start Year</td>
+    </tr>
+    <tr>
+        <td><input ng-model="seriesUpdate.startYear"></td>
+    </tr>
+    <tr>
+        <td>Publisher</td>
+    </tr>
+    <tr>
+        <td><input ng-model="seriesUpdate.publisher"></td>
+    </tr>
+    <tr>
+        <td><button ng-click="editThis(seriesUpdate)">Update</button><button>Cancel</button></td>
+    </tr>
+</table>

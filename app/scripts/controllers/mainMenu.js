@@ -5,4 +5,6 @@ angular.module('comicCloudClient')
 		function($scope, menuState){
 			$scope.menuState = menuState;
 			$scope.menuState.setState(false);
-		}]);
+		}
+    ]
+);

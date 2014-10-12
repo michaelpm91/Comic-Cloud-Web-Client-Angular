@@ -1,9 +1,9 @@
-<div id="series" class="comicDisplay">
+<div id="series" class="comicDisplay" ng-file-drop="onFileSelect($files)">
     <div data-ng-repeat="comic in series.comics| orderBy: 'comic_issue'" class="comicRow" id="comic_{{comic.id}}">
         <div data-comic-card
              data-url="'c/' + comic.id"
              data-information="'#' + comic.comic_issue"
-             data-image-url="$root.urlBase + comic.comic_collection[1] + '/thumbnail?access_token=' + cookies.access_token"
+             data-image-url="env_var.urlBase + comic.comic_collection[1] + '/thumbnail?access_token=' + cookies.access_token"
              ng-right-click="{{comic.id}}"
              class="comicContainer">
          </div>
@@ -12,10 +12,11 @@
 <div id="comicContextMenu">
     <ul class="menu">
         <li>
-            <a>Edit Comic</a>
+            <a ng-click="openEditModal()">Edit Comic</a>
         </li>
         <li>
             <a ng-click="openDeleteModal()">Delete Comic</a>
         </li>
     </ul>
 </div>
+<div class="editPanel" edit-comic-panel></div>

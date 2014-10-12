@@ -1,3 +1,3 @@
 <div id="comicReader"  ng-animate=" 'animate' " ng-click="click()">
-    <img class='comicPage' ng-class="{active : $first}" data-page-number="{{pageNo + 1}}" ng-repeat="(pageNo, page) in comic.comic_collection | object2Array " ng-src="{{$root.urlBase}}{{page}}?access_token={{cookies.access_token}}">
+    <img class='comicPage' ng-class="{active : $first}" data-page-number="{{pageNo + 1}}" ng-repeat="(pageNo, page) in comic.comic_collection | object2Array " ng-src="{{env_var.urlBase}}{{page}}?access_token={{cookies.access_token}}">
 </div>
