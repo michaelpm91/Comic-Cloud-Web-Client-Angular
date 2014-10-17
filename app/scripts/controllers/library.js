@@ -21,12 +21,21 @@ angular.module('comicCloudClient')
         $scope.series;
         $scope.panelVisibility = true;
 
+
         $scope.seriesUpdate = {};
         $scope.currentUploads = {};
+
+        $scope.currentSelections = [];
+
         var series = Series.get(function () {
             $scope.series = series.series;
-            console.log($scope.series);
+            //console.log($scope.series);
         });
+
+        $scope.addSeries = function(){
+            $scope.series.push({series_title: "Fantastic Thing!"});
+            console.log($scope.series);
+        };
 
         $scope.openEditModal = function () {
             $scope.panelVisibility = false;
@@ -135,8 +144,8 @@ angular.module('comicCloudClient')
                     'series_start_year': '0000',
                     'comic_issue': '1'
                 };
-
-
+				if(!$scope.currentUploads[seriesID]) $scope.currentUploads[seriesID] = {};
+				$scope.currentUploads[seriesID][comicID] = {'progress' : '0'};
                 $scope.upload = $upload.upload({
                     url: env_var.urlBase + "/upload",//'http://dev.atomichael.com/Comic-Cloud-API/api/v1/upload',//'http://api.comiccloud.io/0.1/upload',
                     file: file,
@@ -144,11 +153,53 @@ angular.module('comicCloudClient')
                         'match_data': match_data
                     }
                 }).progress(function (evt) {
-                    console.log('percent: ' + parseInt(100.0 * evt.loaded / evt.total));
+                    //console.log('percent: ' + parseInt(100.0 * evt.loaded / evt.total));
+					$scope.currentUploads[seriesID][comicID]['progress'] = parseInt(100.0 * evt.loaded / evt.total);
+					//console.log($scope.currentUploads);
+					//console.log($scope.progressAverage(seriesID));
                 }).success(function (data, status, headers, config) {
                     console.log(data);
                 });
 
+            }
+        };
+
+		$scope.progressAverage = function(targetSeriesID) {
+            console.log(targetSeriesID);
+            console.log($scope.currentUploads);
+            if (!$scope.currentUploads) {
+                return 0;
+            } else {
+                var lengthOfUploads = Object.keys($scope.currentUploads[targetSeriesID]).length;
+                var total = 0;
+                if (lengthOfUploads == 0) return 0;
+                angular.forEach($scope.currentUploads[targetSeriesID], function (value, key) {
+                    total += value['progress'];
+                    //console.log(value['progress']);
+                });
+                var finalTotal = total / (lengthOfUploads * 100) * 100;
+                console.log('something');
+                console.log(finalTotal);
+                return 100;
+                return finalTotal;
+            }
+		};
+        $scope.highlight = function($event, seriesid) {
+            if($event.shiftKey){
+                $event.preventDefault();
+                //console.log('shift click');
+                console.log(seriesid);
+                $scope.currentSelections.push(seriesid);
+                console.log($scope.currentSelections);
+            }
+        };
+        $scope.clearSelection = function($event){
+            /*$event.stopPropagation();
+            $event.cancelBubble = true;
+            $event.returnValue = false;*/
+            if($event.target.id == 'library') {
+                $scope.currentSelections = [];
+                console.log('clear');
             }
         };
     }

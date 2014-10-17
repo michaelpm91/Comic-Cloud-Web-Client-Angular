@@ -6,6 +6,9 @@ body {
 #library {
 
 }
+#comicReader{
+    background-color: black;
+}
 .comicDisplay{
     width:80%;/*85%*/
     margin: 100px auto;
@@ -80,7 +83,7 @@ body {
     height: 32px;
 }
 progress{
-    display: none;
+    display: none;/*block;*/
 }
 progress[value] {
     /* Reset the default appearance */

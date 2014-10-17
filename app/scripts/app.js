@@ -90,7 +90,9 @@ comiccloudapp.directive('comicCard', function(){
         scope: {
             imageUrl : '=imageUrl',
             url : '=url',
-            information : '=information'
+            information : '=information',
+			seriesId : '=seriesId',
+			progressAverage : '='
         },
         templateUrl: "./views/partials/comicCard.html"
     };
@@ -125,3 +127,9 @@ comiccloudapp.directive('editComicPanel', function(){
         templateUrl: "./views/partials/editComicPanel.html"
     };
 });
+comiccloudapp.directive('comicReaderMenu', function(){
+    return {
+        templateUrl: "./views/partials/comicReaderMenu.html"
+    };
+});
+
