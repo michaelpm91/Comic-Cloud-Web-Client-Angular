@@ -160,6 +160,8 @@ angular.module('comicCloudClient')
                 }
             }).progress(function(evt){
                 $scope.currentUploads[$scope.series.id]['comics'][comicID]['progress'] = parseInt(100.0 * evt.loaded / evt.total);
+            }).success(function(data, status, headers, config) {
+                delete $scope.currentUploads[$scope.series.id]['comics'][comicID];
             });
 
         };

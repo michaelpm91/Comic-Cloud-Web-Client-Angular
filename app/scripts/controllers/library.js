@@ -182,7 +182,8 @@ angular.module('comicCloudClient')
                 console.log('No! it\'s this check...');
                 exists = true;
                 seriesID = currentSeries[0]['id'];
-
+                if(!$scope.currentUploads.hasOwnProperty(seriesID)) $scope.currentUploads[seriesID] = {};
+                if(!$scope.currentUploads[seriesID].hasOwnProperty('comics')) $scope.currentUploads[seriesID] = {comics : {}};
                 if(Object.keys($scope.currentUploads[seriesID]['comics']).length == 0){
                     $scope.currentUploads[seriesID] = {progress : 0, comics: {} };
                 }
@@ -213,6 +214,8 @@ angular.module('comicCloudClient')
             }).progress(function(evt){
                 $scope.currentUploads[seriesID]['comics'][comicID]['progress'] = parseInt(100.0 * evt.loaded / evt.total);
 
+            }).success(function(data, status, headers, config) {
+                delete $scope.currentUploads[seriesID]['comics'][comicID];
             });
         };
 
