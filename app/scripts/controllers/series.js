@@ -15,11 +15,28 @@ angular.module('comicCloudClient')
         $scope.comicUpdate = {};
 
         $scope.uploadState = uploadState;
+        $scope.currentUploads = uploadState.currentUploads;
         console.log($scope.uploadState);
 
         $scope.series;
         var series = Series.get({ id: $routeParams.id }, function () {
             $scope.series = series.series;
+            console.log($scope.series);
+
+            if (Object.keys($scope.currentUploads).length > 0) {
+                if (Object.keys($scope.currentUploads[$scope.series.id]).length > 0) {
+                    console.log($scope.currentUploads[$scope.series.id])
+                    angular.forEach($scope.currentUploads[$scope.series.id]['comics'], function (uploadObject, comicID) {
+                        $scope.series.comics.push({
+                             id: comicID,
+                             comic_collection: {},
+                             comic_issue: uploadObject.matchData.comicIssue,
+                             comic_status: "0",
+                             comic_writer: "Unknown"
+                         });
+                    });
+                }
+            }
         });
 
 
@@ -76,43 +93,75 @@ angular.module('comicCloudClient')
             });
         };
 
-        $scope.onFileSelect = function ($files) {
-            for (var i = 0; i < $files.length; i++) {
-                var file = $files[i];
 
-                var filename = file.name;
+        $scope.selectedFiles = [];
+        $scope.progress = [];
+        $scope.upload = [];
+        $scope.uploadResult = [];
 
-                var comicID = comicFunctions.genID();
-
-                console.log(comicID);
-
-                var exists = true;
-                var html = "<div class='comicRow'><div data-comic-card data-image-url=\"'http://placehold.it\/185x287'\" class='comicContainer'  data-information=\"'#1'\"></div></div>";
-                angular.element($compile(html)($scope)).hide().prependTo('#series').fadeIn();
-                console.log('new and added at the end');
-
-
-                var match_data = {
-                    'exists': exists,
-                    'series_id': $scope.series.id,
-                    'comic_id': comicID,
-                    'comic_issue': '1'
-                };
-
-
-                $scope.upload = $upload.upload({
-                    url: env_var.urlBase + "/upload",
-                    file: file,
-                    data: {
-                        'match_data': match_data
-                    }
-                }).progress(function (evt) {
-                    console.log('percent: ' + parseInt(100.0 * evt.loaded / evt.total));
-                }).success(function (data, status, headers, config) {
-                    console.log(data);
-                });
-
+        $scope.onFileSelect = function($files) {
+            for ( var i = 0; i < $files.length; i++) {
+                var newIndex = $scope.selectedFiles.push($files[i]) - 1;
+                $scope.start(newIndex);
             }
+        };
+
+
+        $scope.start = function(index) {
+
+            var file = $scope.selectedFiles[index];
+
+            var filename = file.name;
+
+            var comicMatchInformation = comicFunctions.getComicInformation(filename);
+            var comicIssue = comicMatchInformation.comicIssue;
+
+            var comicID = comicFunctions.genID();
+
+            var exists = true;
+
+            $scope.series.comics.push({
+                id: comicID,
+                comic_collection: {},
+                comic_issue: comicMatchInformation.comicIssue,
+                comic_status: "0",
+                comic_writer: "Unknown"
+            });
+
+            if(!$scope.currentUploads.hasOwnProperty($scope.series.id)) {
+                $scope.currentUploads[$scope.series.id] = {
+                    progress : 0,
+                    comics: {},
+                    matchData: {
+                        seriesTitle: $scope.series.series_title,
+                        seriesStartYear: $scope.seriesseries_start_year
+                    }
+                };
+            }
+            $scope.currentUploads[$scope.series.id]['comics'][comicID] = {
+                progress : 0,
+                matchData: {
+                    comicIssue: comicMatchInformation.comicIssue
+                }
+            };
+
+            var match_data = {
+                'exists': exists,
+                'series_id': $scope.series.id,
+                'comic_id': comicID,
+                'comic_issue': comicMatchInformation.comicIssue
+            };
+
+            $scope.upload[index] = $upload.upload({
+                url: env_var.urlBase + "/upload",
+                file: $scope.selectedFiles[index],
+                data: {
+                    'match_data': match_data
+                }
+            }).progress(function(evt){
+                $scope.currentUploads[$scope.series.id]['comics'][comicID]['progress'] = parseInt(100.0 * evt.loaded / evt.total);
+            });
+
         };
     }
 );

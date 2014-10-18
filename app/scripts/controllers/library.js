@@ -34,7 +34,28 @@ angular.module('comicCloudClient')
         var series = Series.get(function () {
             $scope.series = series.series;
             console.log($scope.series);
+            if (Object.keys($scope.currentUploads).length > 0) {
+                angular.forEach($scope.currentUploads, function (uploadObject, seriesID) {
+                    var temptExist = true;
+                    angular.forEach($scope.series, function(seriesObject, seriesIDKey){
+                        if(seriesIDKey == seriesID) temptExist = false;
+                    });
+                    if(!temptExist){
+                        console.log(seriesID);
+                        console.log('DOESN\'T EXIST. OMG OMG OMG OMG');
+                        console.log($scope.series);
+                        $scope.series.push({
+                            id: seriesID,
+                            series_publisher: "Unknown",
+                            series_start_year: uploadObject.matchData.seriesStartYear,
+                            series_title: uploadObject.matchData.seriesTitle
+                        });
+                    }
+                });
+            }
         });
+
+
 
         $scope.addSeries = function(){
             //$scope.series.push({series_title: "Fantastic Thing!"});
@@ -122,9 +143,10 @@ angular.module('comicCloudClient')
 
             var filename = file.name;
 
-            //var seriesTitle = filename.replace(/ Vol.[0-9]+| #[0-9]+|\(.*?\)|\.[a-z0-9A-Z]+$/g, "").trim();
             var comicMatchInformation = comicFunctions.getComicInformation(filename);
             var seriesTitle = comicMatchInformation.seriesTitle;
+            var seriesStartYear = comicMatchInformation.seriesStartYear;
+            var comicIssue = comicMatchInformation.comicIssue;
 
             var seriesID = comicFunctions.genID();
             var comicID = comicFunctions.genID();
@@ -134,24 +156,42 @@ angular.module('comicCloudClient')
             var currentSeries = $scope.series.filter(function (series) { return series.series_title.toUpperCase() == seriesTitle.toUpperCase()  });
             var lengthOfCurrentSeries = Object.keys(currentSeries).length;
             if(!lengthOfCurrentSeries){
+                console.log('it\'s doing this check...');
                 $scope.series.push({
                     id: seriesID,
                     series_publisher: "Unknown",
-                    series_start_year: "0000",
-                    series_title: seriesTitle,
-                    series_upload_progress: 0
+                    series_start_year: seriesStartYear,
+                    series_title: seriesTitle
+                    //series_upload_progress: 0
                 });
-                $scope.currentUploads[seriesID] = { progress : 0, comics: {}};
-                $scope.currentUploads[seriesID]['comics'][comicID] = {progress : 0};
+                $scope.currentUploads[seriesID] = {
+                    progress : 0,
+                    comics: {},
+                    matchData: {
+                        seriesTitle: seriesTitle,
+                        seriesStartYear: seriesStartYear
+                    }
+                };
+                $scope.currentUploads[seriesID]['comics'][comicID] = {
+                    progress : 0,
+                    matchData: {
+                        comicIssue: comicMatchInformation.comicIssue
+                    }
+                };
             }else{
+                console.log('No! it\'s this check...');
                 exists = true;
                 seriesID = currentSeries[0]['id'];
 
-                if(!$scope.currentUploads.hasOwnProperty(seriesID)){
-                    $scope.currentUploads[seriesID] = { progress : 0, comics: {}};
+                if(Object.keys($scope.currentUploads[seriesID]['comics']).length == 0){
+                    $scope.currentUploads[seriesID] = {progress : 0, comics: {} };
                 }
-
-                $scope.currentUploads[seriesID]['comics'][comicID] = {progress : 0};
+                $scope.currentUploads[seriesID]['comics'][comicID] = {
+                    progress : 0,
+                    matchData: {
+                        comicIssue: comicMatchInformation.comicIssue
+                    }
+                };
             }
 
 
@@ -164,10 +204,8 @@ angular.module('comicCloudClient')
                 'comic_issue': '1'
             };
 
-            $scope.progress[index] = 0;
-            $scope.errorMsg = null;
             $scope.upload[index] = $upload.upload({
-                url: env_var.urlBase, //+ "/upload",
+                url: env_var.urlBase + "/upload",
                 file: $scope.selectedFiles[index],
                 data: {
                     'match_data': match_data

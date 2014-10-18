@@ -85,12 +85,12 @@ comiccloudapp.factory('comicFunctions', function () {
         getComicInformation: function(fileName){
 
             var seriesTitle = fileName.replace(/ Vol.[0-9]+| #[0-9]+|\(.*?\)|\.[a-z0-9A-Z]+$/g, "").trim();
-            var seriesYear = '0000';
+            var seriesStartYear = new Date().getFullYear();//'2014';
             var comicIssue = '1';
 
             var matchInfo = {
                 seriesTitle:seriesTitle,
-                seriesYear:seriesYear,
+                seriesStartYear:seriesStartYear,
                 comicIssue:comicIssue
             };
             return matchInfo;
