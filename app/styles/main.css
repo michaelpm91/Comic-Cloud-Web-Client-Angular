@@ -83,7 +83,8 @@ body {
     height: 32px;
 }
 progress{
-    display: none;/*block;*/
+    display: block;
+    margin: 0 auto;
 }
 progress[value] {
     /* Reset the default appearance */

@@ -4,7 +4,7 @@
 'use strict';
 
 angular.module('comicCloudClient')
-    .controller('LibraryController', function ($cookies, $http, $location, $scope, $rootScope, $upload, $document, $compile, ngDialog, Series, comicFunctions, menuState, env_var) {
+    .controller('LibraryController', function ($cookies, $http, $location, $scope, $rootScope, $upload, $document, $compile, ngDialog, Series, comicFunctions, menuState, env_var, uploadState) {
         if (!$cookies.access_token) {
             return $location.path('/login');
         }
@@ -21,20 +21,31 @@ angular.module('comicCloudClient')
         $scope.series;
         $scope.panelVisibility = true;
 
+        $scope.uploadState = uploadState;
+        $scope.currentUploads = uploadState.currentUploads;
+        console.log($scope.uploadState);
+
+        var loopVar = [];
 
         $scope.seriesUpdate = {};
-        $scope.currentUploads = {};
+        //$scope.currentUploads = {};
 
         $scope.currentSelections = [];
 
         var series = Series.get(function () {
             $scope.series = series.series;
-            //console.log($scope.series);
+            console.log($scope.series);
         });
 
         $scope.addSeries = function(){
-            $scope.series.push({series_title: "Fantastic Thing!"});
-            console.log($scope.series);
+            //$scope.series.push({series_title: "Fantastic Thing!"});
+            //console.log($scope.series);
+            //angular.grep($scope.series, function (series) { return series.series_title == "Fantastic Four" });
+            //var currentSeries = $scope.series.filter(function (series) { return series.series_title == "Fantastic Four"  });
+            //console.log(currentSeries);
+            //$scope.uploadState.push('stuff');
+            console.log($scope.uploadState);
+
         };
 
         $scope.openEditModal = function () {
@@ -99,6 +110,9 @@ angular.module('comicCloudClient')
             for (var i = 0; i < $files.length; i++) {
                 var file = $files[i];
 
+                console.log('queue pos: ' + i);
+
+
                 var filename = file.name;
 
                 var seriesTitle = filename.replace(/ Vol.[0-9]+| #[0-9]+|\(.*?\)|\.[a-z0-9A-Z]+$/g, "").trim();
@@ -106,35 +120,40 @@ angular.module('comicCloudClient')
 
                 var seriesID = comicFunctions.genID();
                 var comicID = comicFunctions.genID();
+                loopVar[i] = {comicID:comicID};
+                console.log(loopVar[i].comicID);
 
                 console.log(comicID);
-
-                var added = false;
                 var exists = false;
-                var continueLoop = true;
-                angular.forEach(angular.element('.comicContainer'), function (ele) {
-                    var existingSeries = angular.element(ele).data('series-title');
-                    if (continueLoop) {
-                        if (seriesTitle.toUpperCase() == existingSeries.toUpperCase()) {
-                            exists = true;
-                            console.log('exists');
-                            seriesID = angular.element(ele).data('series-id');
-                            return continueLoop = false;
-                        }
-                        if (seriesTitle.toUpperCase() < existingSeries.toUpperCase()) {
-                            var html = "<div class='comicRow'><div data-comic-card data-image-url=\"'http://placehold.it\/185x287'\" class='comicContainer' data-series-id='" + seriesID + "' data-series-title='" + seriesTitle + "' data-information=\"'" + seriesTitle + " (0000)'\"></div></div>";
-                            angular.element(ele).parent().before($compile(angular.element(html).hide().fadeIn().css("display", "inline-block"))($scope));
-                            added = true;
-                            console.log('new and added before ' + existingSeries);
-                            return continueLoop = false;
-                        }
-                    }
-                });
-                if (!added && !exists) {
-                    var html = "<div class='comicRow'><div data-comic-card data-image-url=\"'http://placehold.it\/185x287'\" class='comicContainer' data-series-id='" + seriesID + "' data-series-title='" + seriesTitle + "' data-information=\"'" + seriesTitle + " (0000)'\"></div></div>";
-                    angular.element($compile(html)($scope)).hide().appendTo('#library').fadeIn();
-                    console.log('new and added at the end');
+
+                console.log(loopVar);
+
+                var currentSeries = $scope.series.filter(function (series) { return series.series_title.toUpperCase() == seriesTitle.toUpperCase()  });
+                console.log(currentSeries);
+                var lengthOfCurrentSeries = Object.keys(currentSeries).length;
+                if(!lengthOfCurrentSeries){
+                    $scope.series.push({
+                        id: seriesID,
+                        series_publisher: "Unknown",
+                        series_start_year: "0000",
+                        series_title: seriesTitle,
+                        series_upload_progress: 0
+                    });
+                    //console.log($scope.series[seriesID]);
+                    console.log('doesn\'t exist');
+                    $scope.currentUploads[seriesID] = { progress : 0, comics: {}};
+                    $scope.currentUploads[seriesID]['comics'][comicID] = {progress : 0};
+                }else{
+                    console.log('exists');
+                    exists = true;
+                    //console.log(currentSeries[0]);
+                    //console.log(currentSeries[0]['id']);
+                    seriesID = currentSeries[0]['id'];
+                    //$scope.currentUploads[seriesID] = { progress : 0, comics: {}};
+                    $scope.currentUploads[seriesID]['comics'][comicID] = {progress : 0};
                 }
+                var currentSeries = $scope.series.filter(function (series) { return series.id == seriesID  });
+
 
                 var match_data = {
                     'exists': exists,
@@ -144,19 +163,20 @@ angular.module('comicCloudClient')
                     'series_start_year': '0000',
                     'comic_issue': '1'
                 };
-				if(!$scope.currentUploads[seriesID]) $scope.currentUploads[seriesID] = {};
-				$scope.currentUploads[seriesID][comicID] = {'progress' : '0'};
+                console.log(loopVar);
                 $scope.upload = $upload.upload({
-                    url: env_var.urlBase + "/upload",//'http://dev.atomichael.com/Comic-Cloud-API/api/v1/upload',//'http://api.comiccloud.io/0.1/upload',
+                    url: env_var.urlBase, //+ "/upload",//'http://dev.atomichael.com/Comic-Cloud-API/api/v1/upload',//'http://api.comiccloud.io/0.1/upload',
                     file: file,
                     data: {
                         'match_data': match_data
                     }
                 }).progress(function (evt) {
-                    //console.log('percent: ' + parseInt(100.0 * evt.loaded / evt.total));
-					$scope.currentUploads[seriesID][comicID]['progress'] = parseInt(100.0 * evt.loaded / evt.total);
-					//console.log($scope.currentUploads);
-					//console.log($scope.progressAverage(seriesID));
+                    //console.log(evt);
+                    console.log(loopVar);
+                    console.log('percent for comicID[' + loopVar[i]['comicID'] + ']:'  + parseInt(100.0 * evt.loaded / evt.total));
+                    //console.log('Progress for comic id:' + comicID);
+                    //$scope.currentUploads[seriesID]['comics'][comicID]['progress'] = parseInt(100.0 * evt.loaded / evt.total);
+
                 }).success(function (data, status, headers, config) {
                     console.log(data);
                 });
@@ -165,25 +185,31 @@ angular.module('comicCloudClient')
         };
 
 		$scope.progressAverage = function(targetSeriesID) {
+            console.log('woop');
             console.log(targetSeriesID);
             console.log($scope.currentUploads);
             if (!$scope.currentUploads) {
-                return 0;
+                return 'skip';
             } else {
                 var lengthOfUploads = Object.keys($scope.currentUploads[targetSeriesID]).length;
                 var total = 0;
                 if (lengthOfUploads == 0) return 0;
+                console.log($scope.currentUploads[targetSeriesID]);
                 angular.forEach($scope.currentUploads[targetSeriesID], function (value, key) {
-                    total += value['progress'];
+                    console.log(typeof value['progress']);
+                    total += parseInt(value['progress']);
                     //console.log(value['progress']);
                 });
-                var finalTotal = total / (lengthOfUploads * 100) * 100;
+                console.log(typeof total);
+                console.log(typeof lengthOfUploads);
+                var finalTotal = parseInt(total) / (parseInt(lengthOfUploads) * 100) * 100;
                 console.log('something');
-                console.log(finalTotal);
-                return 100;
+                console.log(parseInt(finalTotal));
+                //return 100;
                 return finalTotal;
             }
 		};
+
         $scope.highlight = function($event, seriesid) {
             if($event.shiftKey){
                 $event.preventDefault();
@@ -193,6 +219,7 @@ angular.module('comicCloudClient')
                 console.log($scope.currentSelections);
             }
         };
+
         $scope.clearSelection = function($event){
             /*$event.stopPropagation();
             $event.cancelBubble = true;

@@ -11,7 +11,7 @@ var comiccloudapp = angular.module('comicCloudClient', [
     'ngSanitize',
     'ngTouch',
     'angularFileUpload',
-    'ngDialog',
+    'ngDialog'
 ]);
 comiccloudapp.config(function ($routeProvider, $locationProvider, $httpProvider) {
     $routeProvider
@@ -84,7 +84,7 @@ comiccloudapp.factory('comicFunctions', function () {
         }
     }
 });
-comiccloudapp.directive('comicCard', function(){
+comiccloudapp.directive('comicCard', function(uploadState){
     return {
         restrict: 'AE',
         scope: {
@@ -92,7 +92,7 @@ comiccloudapp.directive('comicCard', function(){
             url : '=url',
             information : '=information',
 			seriesId : '=seriesId',
-			progressAverage : '='
+            uploadProgress : '='
         },
         templateUrl: "./views/partials/comicCard.html"
     };
@@ -116,6 +116,51 @@ comiccloudapp.factory('page', function() {
 		title: function() { return title; },
 		setTitle: function(newTitle) { title = newTitle }
    };
+});
+/*comiccloudapp.service('uploadState', function() {
+    this.userData = {yearSetCount: 0};
+
+    this.user = function() {
+        return this.userData;
+    };
+
+    this.setEmail = function(email) {
+        this.userData.email = email;
+    };
+
+    this.getEmail = function() {
+        return this.userData.email;
+    };
+
+    this.setSetCount = function(setCount) {
+        this.userData.yearSetCount = setCount;
+    };
+
+    this.getSetCount = function() {
+        return this.userData.yearSetCount;
+    };
+});*/
+comiccloudapp.factory('uploadState', function(){
+    var factory = {};
+    factory.currentUploads = {};
+    factory.progressAverage = function(targetSeriesID) {
+
+        if(!factory.currentUploads.hasOwnProperty(targetSeriesID)){
+            return 0;
+        } else {
+            //console.log('not empty');
+            var lengthOfUploads = Object.keys(factory.currentUploads[targetSeriesID]).length;
+            var total = 0;
+            if (lengthOfUploads == 0) return 0;
+            angular.forEach(factory.currentUploads[targetSeriesID]['comics'], function (value, key) {
+                total += parseInt(value['progress']);
+            });
+            var finalTotal = total / (lengthOfUploads * 100) * 100;
+
+            return finalTotal;
+        }
+    }
+    return factory;
 });
 comiccloudapp.directive('editSeriesPanel', function(){
     return {

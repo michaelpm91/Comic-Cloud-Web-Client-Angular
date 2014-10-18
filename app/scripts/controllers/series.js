@@ -4,7 +4,7 @@
 'use strict';
 
 angular.module('comicCloudClient')
-    .controller('SeriesController', function ($cookies, $http, $location, $scope, $compile, $rootScope, $routeParams, comicFunctions, ngDialog, $upload, Series, Comic, env_var) {
+    .controller('SeriesController', function ($cookies, $http, $location, $scope, $compile, $rootScope, $routeParams, comicFunctions, ngDialog, $upload, Series, Comic, env_var, uploadState) {
         if (!$cookies.access_token) {
             $location.path('/login');
         }
@@ -13,6 +13,10 @@ angular.module('comicCloudClient')
         $scope.targetId;
         $scope.env_var = env_var;
         $scope.comicUpdate = {};
+
+        $scope.uploadState = uploadState;
+        console.log($scope.uploadState);
+
         $scope.series;
         var series = Series.get({ id: $routeParams.id }, function () {
             $scope.series = series.series;
