@@ -81,6 +81,19 @@ comiccloudapp.factory('comicFunctions', function () {
                 text += possible.charAt(Math.floor(Math.random() * possible.length));
 
             return text;
+        },
+        getComicInformation: function(fileName){
+
+            var seriesTitle = fileName.replace(/ Vol.[0-9]+| #[0-9]+|\(.*?\)|\.[a-z0-9A-Z]+$/g, "").trim();
+            var seriesYear = '0000';
+            var comicIssue = '1';
+
+            var matchInfo = {
+                seriesTitle:seriesTitle,
+                seriesYear:seriesYear,
+                comicIssue:comicIssue
+            };
+            return matchInfo;
         }
     }
 });
@@ -148,8 +161,7 @@ comiccloudapp.factory('uploadState', function(){
         if(!factory.currentUploads.hasOwnProperty(targetSeriesID)){
             return 0;
         } else {
-            //console.log('not empty');
-            var lengthOfUploads = Object.keys(factory.currentUploads[targetSeriesID]).length;
+            var lengthOfUploads = Object.keys(factory.currentUploads[targetSeriesID]['comics']).length;
             var total = 0;
             if (lengthOfUploads == 0) return 0;
             angular.forEach(factory.currentUploads[targetSeriesID]['comics'], function (value, key) {

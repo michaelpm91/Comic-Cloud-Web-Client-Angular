@@ -122,8 +122,9 @@ angular.module('comicCloudClient')
 
             var filename = file.name;
 
-            var seriesTitle = filename.replace(/ Vol.[0-9]+| #[0-9]+|\(.*?\)|\.[a-z0-9A-Z]+$/g, "").trim();
-
+            //var seriesTitle = filename.replace(/ Vol.[0-9]+| #[0-9]+|\(.*?\)|\.[a-z0-9A-Z]+$/g, "").trim();
+            var comicMatchInformation = comicFunctions.getComicInformation(filename);
+            var seriesTitle = comicMatchInformation.seriesTitle;
 
             var seriesID = comicFunctions.genID();
             var comicID = comicFunctions.genID();
@@ -152,7 +153,6 @@ angular.module('comicCloudClient')
 
                 $scope.currentUploads[seriesID]['comics'][comicID] = {progress : 0};
             }
-            //var currentSeries = $scope.series.filter(function (series) { return series.id == seriesID  });
 
 
             var match_data = {
