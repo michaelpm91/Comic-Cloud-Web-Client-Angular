@@ -41,9 +41,6 @@ angular.module('comicCloudClient')
                         if(seriesIDKey == seriesID) temptExist = false;
                     });
                     if(!temptExist){
-                        console.log(seriesID);
-                        console.log('DOESN\'T EXIST. OMG OMG OMG OMG');
-                        console.log($scope.series);
                         $scope.series.push({
                             id: seriesID,
                             series_publisher: "Unknown",
@@ -156,7 +153,6 @@ angular.module('comicCloudClient')
             var currentSeries = $scope.series.filter(function (series) { return series.series_title.toUpperCase() == seriesTitle.toUpperCase()  });
             var lengthOfCurrentSeries = Object.keys(currentSeries).length;
             if(!lengthOfCurrentSeries){
-                console.log('it\'s doing this check...');
                 $scope.series.push({
                     id: seriesID,
                     series_publisher: "Unknown",
@@ -179,7 +175,6 @@ angular.module('comicCloudClient')
                     }
                 };
             }else{
-                console.log('No! it\'s this check...');
                 exists = true;
                 seriesID = currentSeries[0]['id'];
                 if(!$scope.currentUploads.hasOwnProperty(seriesID)) $scope.currentUploads[seriesID] = {};
@@ -201,8 +196,8 @@ angular.module('comicCloudClient')
                 'series_id': seriesID,
                 'comic_id': comicID,
                 'series_title': seriesTitle,
-                'series_start_year': '0000',
-                'comic_issue': '1'
+                'series_start_year': seriesStartYear,
+                'comic_issue': comicIssue
             };
 
             $scope.upload[index] = $upload.upload({

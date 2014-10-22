@@ -83,10 +83,11 @@ comiccloudapp.factory('comicFunctions', function () {
             return text;
         },
         getComicInformation: function(fileName){
-
-            var seriesTitle = fileName.replace(/ Vol.[0-9]+| #[0-9]+|\(.*?\)|\.[a-z0-9A-Z]+$/g, "").trim();
-            var seriesStartYear = new Date().getFullYear();//'2014';
-            var comicIssue = '1';
+			
+			fileName = fileName.replace(/_/g, " ").replace(/\.[a-z0-9A-Z]+$/g, "");
+            var seriesTitle = (fileName.replace(/ (Vol\. ?|Volume )\d+| ?#\d+| \d+ ?|\(.*?\)/ig, "").trim() ? fileName.replace(/ (Vol\. ?|Volume )\d+| ?#\d+| \d+ ?|\(.*?\)/ig, "").trim() : 'Unknown');
+            var seriesStartYear = (fileName.match(' ?(\\d{4}) ?') ? fileName.match(' ?(\\d{4}) ?')[1] : new Date().getFullYear()); 
+            var comicIssue = (parseInt(fileName.match('#(\\d+)') ? fileName.match('#(\\d+)')[1] : (fileName.match(' (\\d+) ') ? fileName.match(' (\\d+) ')[1] : 1  ), 10));
 
             var matchInfo = {
                 seriesTitle:seriesTitle,
@@ -97,6 +98,18 @@ comiccloudapp.factory('comicFunctions', function () {
         }
     }
 });
+
+comiccloudapp.directive('imgFallback', function () {
+    var fallbackSrc = {
+        link: function postLink(scope, iElement, iAttrs) {
+            iElement.bind('error', function() {
+                angular.element(this).attr("src", "http://placekitten.com/200/287");
+            });
+        }
+    }
+    return fallbackSrc;
+});
+
 comiccloudapp.directive('comicCard', function(uploadState){
     return {
         restrict: 'AE',
@@ -130,29 +143,6 @@ comiccloudapp.factory('page', function() {
 		setTitle: function(newTitle) { title = newTitle }
    };
 });
-/*comiccloudapp.service('uploadState', function() {
-    this.userData = {yearSetCount: 0};
-
-    this.user = function() {
-        return this.userData;
-    };
-
-    this.setEmail = function(email) {
-        this.userData.email = email;
-    };
-
-    this.getEmail = function() {
-        return this.userData.email;
-    };
-
-    this.setSetCount = function(setCount) {
-        this.userData.yearSetCount = setCount;
-    };
-
-    this.getSetCount = function() {
-        return this.userData.yearSetCount;
-    };
-});*/
 comiccloudapp.factory('uploadState', function(){
     var factory = {};
     factory.currentUploads = {};

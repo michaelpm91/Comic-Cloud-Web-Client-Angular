@@ -1,8 +1,8 @@
 <a ng-href="{{url}}">
     <div class='comicBlock'>
-        <img ng-src="{{imageUrl}}"/>
+        <img img-fallback ng-src="{{imageUrl}}"/>
         <div class='comicBlockInformation'>{{information}}</div>
-		<progress value="{{uploadProgress}}" max="100"></progress>
+		<progress ng-hide="!uploadProgress" value="{{uploadProgress}}" max="100"></progress>
     </div>
 </a>
 
