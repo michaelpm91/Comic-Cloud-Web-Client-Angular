@@ -8,9 +8,11 @@ body {
 }
 #comicReader{
     background-color: black;
+    pointer-events: none;
 }
 .comicDisplay{
     width:80%;/*85%*/
+	min-height:800px;
     margin: 100px auto;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -24,6 +26,36 @@ body {
     box-shadow: 0 1px 2px #DCDCDC;
     padding-top: 2%;
 }
+#comicControlOverlay{
+    z-index: 9999;
+    position: relative;
+}
+#comicControlOverlay .pageControl{
+    height: 100vh;
+    width: 50%;
+    opacity:0.0;
+    filter:alpha(opacity=0);
+    -webkit-transition: all 0.2s ease-in-out;
+    -moz-transition: all 0.2s ease-in-out;
+    -o-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+}
+#comicControlOverlay #previousPageControl{
+    float: left;
+    background: url("../images/left-chevron.png") no-repeat center center !important;
+}
+#comicControlOverlay #nextPageControl{
+    float: right;
+    background: url("../images/right-chevron.png") no-repeat center center !important;
+}
+#comicControlOverlay #previousPageControl:hover, #comicControlOverlay #nextPageControl:hover{
+    opacity:1.0;
+    filter:alpha(opacity=100);
+    -webkit-transition: all 0.2s ease-in-out;
+    -moz-transition: all 0.2s ease-in-out;
+    -o-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+}
 .comicRow{
     vertical-align: top;
     margin-bottom: 25px;
@@ -34,11 +66,21 @@ body {
 }
 .comicPage{
     display: none;
-    margin: 0 auto;
-    height: 100%;
+    /*margin: 0 auto;
+    height: 100%;*/
+
+    max-width: 100%;
+    max-height: 100%;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    overflow: auto;
+    position: absolute;
+    right: 0;
+    top: 0;
 }
 #comicReader{
-    height: 100%;
+    height: 100vh;/*100%;*/
 }
 .comicPage.active{
     display:block;

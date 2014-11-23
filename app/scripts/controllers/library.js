@@ -4,7 +4,7 @@
 'use strict';
 
 angular.module('comicCloudClient')
-    .controller('LibraryController', function ($cookies, $http, $location, $scope, $rootScope, $upload, $document, $compile, $timeout, ngDialog, Series, comicFunctions, menuState, env_var, uploadState) {
+    .controller('LibraryController', function ($cookies, $http, $location, $scope, $rootScope, $upload, $document, $compile, $timeout, $interval, ngDialog, Series, Comic, comicFunctions, menuState, env_var, uploadState) {
         if (!$cookies.access_token) {
             return $location.path('/login');
         }
@@ -25,7 +25,7 @@ angular.module('comicCloudClient')
         $scope.currentUploads = uploadState.currentUploads;
         console.log($scope.uploadState);
 
-
+        $scope.processingComic = [];
         $scope.seriesUpdate = {};
         //$scope.currentUploads = {};
 
@@ -50,6 +50,14 @@ angular.module('comicCloudClient')
                     }
                 });
             }
+            angular.forEach($scope.series, function(seriesObject, seriesIDKey) {
+                angular.forEach(seriesObject['comics'], function(comicObject, comicId){
+                    //console.log(comicObject);
+                    if(comicObject['comic_status'] == 0){
+                        $scope.processingComic.push({comic_id: comicObject['id']})
+                    }
+                });
+            });
         });
 
 
@@ -211,6 +219,21 @@ angular.module('comicCloudClient')
 
             }).success(function(data, status, headers, config) {
                 delete $scope.currentUploads[seriesID]['comics'][comicID];
+				var comicProcessTimer = $interval(function(){
+					console.log('Process Check.');
+					//var updatedSeries = Series.get({ id: $routeParams.id }, function () {
+						//$scope.series = series.series;
+						//console.log($scope.series);
+					//});
+					var updatedComic = Comic.get({ id: comicID}, function() {
+						console.log(updatedComic.comic);
+						if(updatedComic.comic.comic_status == 1){
+							$interval.cancel(comicProcessTimer);
+							console.log('Processing Finished.');	
+						}
+					});
+
+				}, 5000);
             });
         };
 
