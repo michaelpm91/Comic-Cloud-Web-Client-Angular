@@ -1,6 +1,6 @@
 <div id="library" class="comicDisplay" ng-file-drop="onFileSelect($files)" ng-click="clearSelection($event)">
     <div data-ng-repeat="thisSeries in series | orderBy:'series_title'" class="comicRow" id="series_{{thisSeries.id}}">
-        <div data-comic-card
+        <!--<div data-comic-card
              data-url="'s/' + thisSeries.id"
              data-information="thisSeries.series_title +' (' + thisSeries.series_start_year +')'"
              data-image-url="env_var.urlBase + thisSeries.comics[0].comic_collection[1] + '/350?access_token=' + cookies.access_token"
@@ -10,8 +10,8 @@
              ng-right-click="{{thisSeries.id}}"
              ng-click="highlight($event, thisSeries.id)"
              class="comicContainer">
-            <!--progressAverage(thisSeries.id)-->
-        </div>
+        </div>-->
+      <ncomic-card series-id="thisSeries.id"></ncomic-card>
     </div>
 </div>
 <!--<div ng-click="addSeries()">addSeries</div>

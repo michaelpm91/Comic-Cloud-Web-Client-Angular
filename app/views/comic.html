@@ -1,4 +1,4 @@
 <div id="comicControlOverlay"><div class='pageControl' id="previousPageControl" ng-click="changePage(-1)"></div><div class='pageControl' id="nextPageControl" ng-click="changePage(1)"></div></div>
-<div id="comicReader"  ng-animate=" 'animate' ">
-    <img class='comicPage' ng-class="{active : $first}" data-page-number="{{pageNo + 1}}" ng-repeat="(pageNo, page) in comic.comic_collection | object2Array " ng-src="{{env_var.urlBase}}{{page}}?access_token={{cookies.access_token}}">
+<div id="comicReader" class="all" ng-animate=" 'animate' ">
+    <img class='comicPage all' ng-class="{active : $first}" data-page-number="{{pageNo + 1}}" ng-repeat="(pageNo, page) in comic.comic_collection | object2Array " ng-src="{{env_var.urlBase}}{{page}}/{{pageSize}}?access_token={{cookies.access_token}}">
 </div>

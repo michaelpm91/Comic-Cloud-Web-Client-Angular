@@ -10,8 +10,7 @@
     "angular-sanitize": "1.2.16",
     "angular-animate": "1.2.16",
     "angular-touch": "1.2.16",
-    "angular-route": "1.2.16",
-    "angular-snap": "~1.6.0"
+    "angular-route": "1.2.16"
   },
   "devDependencies": {
     "angular-mocks": "1.2.16",

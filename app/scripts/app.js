@@ -83,10 +83,10 @@ comiccloudapp.factory('comicFunctions', function () {
             return text;
         },
         getComicInformation: function(fileName){
-			
+
 			fileName = fileName.replace(/_/g, " ").replace(/\.[a-z0-9A-Z]+$/g, "");
             var seriesTitle = (fileName.replace(/ (Vol\. ?|Volume )\d+| ?#\d+| \d+ ?|\(.*?\)/ig, "").trim() ? fileName.replace(/ (Vol\. ?|Volume )\d+| ?#\d+| \d+ ?|\(.*?\)/ig, "").trim() : 'Unknown');
-            var seriesStartYear = (fileName.match(' ?(\\d{4}) ?') ? fileName.match(' ?(\\d{4}) ?')[1] : new Date().getFullYear()); 
+            var seriesStartYear = (fileName.match(' ?(\\d{4}) ?') ? fileName.match(' ?(\\d{4}) ?')[1] : new Date().getFullYear());
             var comicIssue = (parseInt(fileName.match('#(\\d+)') ? fileName.match('#(\\d+)')[1] : (fileName.match(' (\\d+) ') ? fileName.match(' (\\d+) ')[1] : 1  ), 10));
 
             var matchInfo = {
@@ -122,6 +122,20 @@ comiccloudapp.directive('comicCard', function(uploadState){
         },
         templateUrl: "./views/partials/comicCard.html"
     };
+});
+comiccloudapp.directive('ncomicCard', function(){
+  return {
+    restrict: 'E',
+    replace: true,
+    templateUrl: "./views/partials/ncomicCard.html",
+    scope: {
+      seriesId : '=seriesId'
+    },
+    link: function(scope, elem, attrs) {
+      /*var seriesId = scope.seriesId = attrs.seriesId;
+      console.log(seriesId);*/
+    }
+  };
 });
 comiccloudapp.directive('mainMenu', function(){
     return {
