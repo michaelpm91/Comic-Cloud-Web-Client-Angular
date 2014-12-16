@@ -33,20 +33,25 @@ angular.module('comicCloudClient')
 
         var series = Series.get(function () {
             $scope.series = series.series;
-            console.log($scope.series);
+            //console.log($scope.series);
             if (Object.keys($scope.currentUploads).length > 0) {
                 angular.forEach($scope.currentUploads, function (uploadObject, seriesID) {
-                    var temptExist = true;
+                    var tempExist = true;
                     angular.forEach($scope.series, function(seriesObject, seriesIDKey){
-                        if(seriesIDKey == seriesID) temptExist = false;
+                        //if(seriesIDKey == seriesID) tempExist = false;
+                        if(seriesObject.id  == seriesID) tempExist = false;
+                        console.log(seriesObject.id + ' == ' + seriesID);
                     });
-                    if(!temptExist){
+                    if(tempExist){
+                        console.log('Rebuilding a series! :) ');
                         $scope.series.push({
                             id: seriesID,
                             series_publisher: "Unknown",
                             series_start_year: uploadObject.matchData.seriesStartYear,
                             series_title: uploadObject.matchData.seriesTitle
                         });
+                    }else{
+                        console.log('nothing to rebuild here :( ');
                     }
                 });
             }
@@ -58,6 +63,7 @@ angular.module('comicCloudClient')
                     }
                 });
             });
+            //console.log($scope.series);
         });
 
 

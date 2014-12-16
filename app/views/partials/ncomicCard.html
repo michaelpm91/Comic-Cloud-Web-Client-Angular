@@ -1,0 +1,8 @@
+<a ng-href="c/{{comic.id}}">
+    <div class='comicCard'>
+        <img class="comicHoldingImage" src="../app/images/comicHolder.gif">
+        <comic-cover-img image-id="{{comic.comic_collection[1]}}"></comic-cover-img>
+        <div class='comicCardInformation'>#{{comic.comic_issue}}</div>
+        <progress ng-hide="!currentUploads[series.id]['comics'][comic.id]['progress']" value="{{currentUploads[series.id]['comics'][comic.id]['progress']}}" max="100"></progress>
+    </div>
+</a>

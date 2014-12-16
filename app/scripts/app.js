@@ -83,10 +83,10 @@ comiccloudapp.factory('comicFunctions', function () {
             return text;
         },
         getComicInformation: function(fileName){
-			
+
 			fileName = fileName.replace(/_/g, " ").replace(/\.[a-z0-9A-Z]+$/g, "");
             var seriesTitle = (fileName.replace(/ (Vol\. ?|Volume )\d+| ?#\d+| \d+ ?|\(.*?\)/ig, "").trim() ? fileName.replace(/ (Vol\. ?|Volume )\d+| ?#\d+| \d+ ?|\(.*?\)/ig, "").trim() : 'Unknown');
-            var seriesStartYear = (fileName.match(' ?(\\d{4}) ?') ? fileName.match(' ?(\\d{4}) ?')[1] : new Date().getFullYear()); 
+            var seriesStartYear = (fileName.match(' ?(\\d{4}) ?') ? fileName.match(' ?(\\d{4}) ?')[1] : new Date().getFullYear());
             var comicIssue = (parseInt(fileName.match('#(\\d+)') ? fileName.match('#(\\d+)')[1] : (fileName.match(' (\\d+) ') ? fileName.match(' (\\d+) ')[1] : 1  ), 10));
 
             var matchInfo = {
@@ -122,6 +122,98 @@ comiccloudapp.directive('comicCard', function(uploadState){
         },
         templateUrl: "./views/partials/comicCard.html"
     };
+});
+comiccloudapp.directive('ncomicCard', function () {
+    return {
+        restrict: 'E',
+        replace: true,
+        templateUrl: "./views/partials/ncomicCard.html",
+        link: function (scope, elem, attrs) {
+
+        }
+    };
+});
+comiccloudapp.directive('nseriesCard', function () {
+    return {
+        restrict: 'E',
+        replace: true,
+        templateUrl: "./views/partials/nseriesCard.html",
+        link: function (scope, elem, attrs) {
+
+        }
+    }
+});
+comiccloudapp.directive('comicCoverImg', function($window) {
+    return {
+        restrict: 'E',
+        replace: true,
+        template: '<img class="comicImg imgHide" ng-src="{{env_var.urlBase}}{{imageId}}/{{imageSize}}?access_token={{cookies.access_token}}">',
+        link: function (scope, elem, attrs) {
+            scope.imageId = attrs.imageId;
+            elem.bind('load', function () {
+                angular.element(this).removeClass('imgHide').siblings('img.comicHoldingImage').addClass('imgHide');
+                console.log('image loaded @ ' + attrs.imageId);
+            });
+            /*setTimeout(function(){
+                scope.$apply(function () {
+                    elem.attr("ng-src", attrs.waiting);
+                });
+            }, 3000);*/
+            if ($window.innerWidth >= 1200) {
+                scope.imageSize = 600;
+            } else if ($window.innerWidth < 1200) {
+                scope.imageSize = 450;
+            }
+            angular.element(window).resize(function () {
+                scope.$apply(function () {
+                    if ($window.innerWidth >= 1200) {
+                        scope.imageSize = 600;
+                    } else if ($window.innerWidth < 1200) {
+                        scope.imageSize = 450;
+                    }
+                });
+            });
+        }
+    }
+});
+comiccloudapp.directive('comicPageImg', function($window) {
+    return {
+        restrict: 'E',
+        replace: true,
+        template: '<img class="comicImg imgHide" ng-src="{{env_var.urlBase}}{{imageId}}/{{imageSize}}?access_token={{cookies.access_token}}">',
+        link: function(scope, elem, attrs) {
+            scope.imageId = attrs.imageId;
+            elem.bind('load', function() {
+                //angular.element(this).removeClass('imgHide').siblings('img.comicHoldingImage').addClass('imgHide');
+                console.log('image loaded @ ' + attrs.imageId);
+            });
+            if($window.innerWidth >= 1200){
+                scope.imageSize = 1500;
+            }else if($window.innerWidth < 1200){
+                scope.imageSize = 1000;
+            }
+            angular.element(window).resize(function(){
+                scope.$apply(function () {
+                    if($window.innerWidth >= 1200){
+                        scope.imageSize = 1500;
+                    }else if($window.innerWidth < 1200){
+                        scope.imageSize = 1000;
+                    }
+                });
+            });
+        }
+    }
+});
+comiccloudapp.directive('comicReader', function($window){
+    return {
+        restrict: 'E',
+        replace: true,
+        templateUrl: "./views/partials/comicReader.html",
+        link: function (scope, elem, attrs) {
+            setTimeout(function(){console.log(scope.comicLength);}, 3000);
+            console.log(scope);
+        }
+    }
 });
 comiccloudapp.directive('mainMenu', function(){
     return {

@@ -20,12 +20,14 @@ angular.module('comicCloudClient')
 
         $scope.series;
         var series = Series.get({ id: $routeParams.id }, function () {
+            console.log(series);
             $scope.series = series.series;
-            console.log($scope.series);
+            console.log($scope.series.id);
 
             if (Object.keys($scope.currentUploads).length > 0) {
                 if (Object.keys($scope.currentUploads[$scope.series.id]).length > 0) {
-                    console.log($scope.currentUploads[$scope.series.id])
+                    console.log('rebuild time!');
+                    console.log($scope.currentUploads[$scope.series.id]);
                     angular.forEach($scope.currentUploads[$scope.series.id]['comics'], function (uploadObject, comicID) {
                         $scope.series.comics.push({
                              id: comicID,
