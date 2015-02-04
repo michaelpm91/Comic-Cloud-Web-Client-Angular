@@ -4,34 +4,32 @@
 'use strict';
 
 angular.module('comicCloudClient')
-    .controller('LoginController', ['$location', '$cookies','$http','$scope',
-        function ($location, $cookies, $http, $scope) {
-			$scope.submit = function(user){
-                var showMenuIcon = function(){
-                    return false;
-                }
+    .controller('LoginController', function ($location, $cookies, $http, $scope, env_var) {
+        $scope.submit = function(user){
+            var showMenuIcon = function(){
+                return false;
+            }
 
-                var data = {
-                    'grant_type' : 'password',
-                    'client_id' : '1',
-                    'client_secret' : 'secret',
-                    'username' : user.email,
-                    'password' : user.password
-                };
+            var data = {
+                'grant_type' : 'password',
+                'client_id' : '1',
+                'client_secret' : 'secret',
+                'username' : user.email,
+                'password' : user.password
+            };
 
-				$http({
-					method  : 'POST',
-					url     : 'http://dev.atomichael.com/Comic-Cloud-API/oauth/access_token',
-					data    : $.param(data),
-					headers : { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }
-				})
-				.success(function(data) {
-                    $cookies.access_token = data.access_token;
-                    $cookies.refresh_token = data.refresh_token;
-                    $location.path("/library");
-				});
+            $http({
+                method  : 'POST',
+                url     : env_var.apiBase + '/oauth/access_token',
+                data    : $.param(data),
+                headers : { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }
+            })
+            .success(function(data) {
+                $cookies.access_token = data.access_token;
+                $cookies.refresh_token = data.refresh_token;
+                $location.path("/library");
+            });
 
-			}
         }
-    ]
+    }
 );

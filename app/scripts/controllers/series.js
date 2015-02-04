@@ -89,7 +89,7 @@ angular.module('comicCloudClient')
         $scope.deleteThis = function (comicId) {
             Comic.delete({id: comicId}, function () {
                 console.log('Comic ' + comicId + ' deleted.');
-                angular.element('#comic_' + comicId).fadeOut(function () {
+                angular.element('#comic_' + comicId).fadeOut(function () {//TODO: Move out of controller
                     this.remove();
                 });
             });
@@ -155,7 +155,7 @@ angular.module('comicCloudClient')
             };
 
             $scope.upload[index] = $upload.upload({
-                url: env_var.urlBase + "/upload",
+                url: env_var.apiBase + "/upload",
                 file: $scope.selectedFiles[index],
                 data: {
                     'match_data': match_data

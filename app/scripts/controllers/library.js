@@ -5,9 +5,9 @@
 
 angular.module('comicCloudClient')
     .controller('LibraryController', function ($cookies, $http, $location, $scope, $rootScope, $upload, $document, $compile, $timeout, $interval, ngDialog, Series, Comic, comicFunctions, menuState, env_var, uploadState) {
-        if (!$cookies.access_token) {
+        /*if (!$cookies.access_token) {
             return $location.path('/login');
-        }
+        }*/
 
         /*$scope.showMenuIcon = function(){
          return true;
@@ -215,7 +215,7 @@ angular.module('comicCloudClient')
             };
 
             $scope.upload[index] = $upload.upload({
-                url: env_var.urlBase + "/upload",
+                url: env_var.apiBase + "/upload",
                 file: $scope.selectedFiles[index],
                 data: {
                     'match_data': match_data
