@@ -10,8 +10,7 @@ var comiccloudapp = angular.module('comicCloudClient', [
     'ngRoute',
     'ngSanitize',
     'ngTouch',
-    'angularFileUpload',
-    'ngDialog'
+    'angularFileUpload'
 ]);
 comiccloudapp.config(function ($routeProvider, $locationProvider, $httpProvider) {
     $routeProvider
@@ -57,48 +56,6 @@ comiccloudapp.config(function ($routeProvider, $locationProvider, $httpProvider)
     // use the HTML5 History API
     $locationProvider.html5Mode(true);
 
-    /*$httpProvider.interceptors.push(function($q, $cookies, $location, $injector) {
-        return {
-            'responseError': function(rejection) {
-                // do something on error
-                //console.log(rejection);
-                if(rejection.status == 401){
-                    if($cookies.refresh_token){
-                        //var $http = $injector.get('$http');
-
-                        //$http.get('/');
-                        console.log(rejection.config);
-                        //return $http(rejection.config);
-                        var $http = $injector.get('$http');
-
-                        var data = {
-                            'grant_type' : 'refresh_token',
-                            'client_id' : '1',
-                            'client_secret' : 'secret',
-                            'refresh_token' : $cookies.refresh_token
-                        };
-                        $http({
-                            method  : 'POST',
-                            url     : 'http://dev.atomichael.com/Comic-Cloud-API/oauth/access_token',
-                            data    : $.param(data),
-                            headers : { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }
-                        }).success(function(data) {
-                            $cookies.access_token = data.access_token;
-                            //$location.path("/library");
-                            console.log(rejection.config.headers.Authorization);
-                            console.log(data.access_token);
-                            rejection.config.headers.Authorization = data.access_token;
-                            return $http(rejection.config);
-                        }).error(function(){
-                            //$cookies.access_token = $cookies.refresh_token = undefined;
-                            $location.path("/");
-                        });
-
-                    }
-                }
-            }
-        };
-    });*/
     $httpProvider.responseInterceptors.push(function($cookies, $q, $injector, $location, env_var){
             return function(promise) {
                 return promise.then(function(response) {
