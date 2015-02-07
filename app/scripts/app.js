@@ -141,7 +141,7 @@ comiccloudapp.factory('AuthService', function($q, $cookies, $location){
 });
 
 comiccloudapp.constant( 'env_var', {
-    apiBase : 'http://dev.atomichael.com/Comic-Cloud-API/api/v1',
+    apiBase : 'http://api.dev.comiccloud.io/v1',
     clientBase : ''
 });
 

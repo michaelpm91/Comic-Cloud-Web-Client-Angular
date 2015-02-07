@@ -4,7 +4,7 @@
 'use strict';
 
 angular.module('comicCloudClient')
-    .controller('LibraryController', function ($cookies, $http, $location, $scope, $rootScope, $upload, $document, $compile, $timeout, $interval, ngDialog, Series, Comic, comicFunctions, menuState, env_var, uploadState) {
+    .controller('LibraryController', function ($cookies, $http, $location, $scope, $rootScope, $upload, $document, $compile, $timeout, $interval, Series, Comic, comicFunctions, menuState, env_var, uploadState) {
         /*if (!$cookies.access_token) {
             return $location.path('/login');
         }*/
@@ -96,7 +96,7 @@ angular.module('comicCloudClient')
             $scope.panelVisibility = true;
         };
 
-        $scope.openDeleteModal = function () {
+        /*$scope.openDeleteModal = function () {
             console.log($scope.targetSeries);
             ngDialog.open({
                 template: './views/partials/deleteModal.html',
@@ -105,7 +105,7 @@ angular.module('comicCloudClient')
                     type: 'series'
                 }
             });
-        };
+        };*/
 
         $scope.editThis = function(seriesObject){
             console.log(seriesObject);
