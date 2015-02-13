@@ -79,7 +79,7 @@ comiccloudapp.config(function ($routeProvider, $locationProvider, $httpProvider)
                             headers : { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }
                         }).then(function(loginResponse) {
                             console.log(loginResponse);
-                            if (loginResponse.data) {
+                            if (loginResponse.data && loginResponse.status != 401) {
                                 //$cookies.access_token = response.config.headers.Authorization = loginResponse.access_token;
                                 // now let's retry the original request - transformRequest in .run() below will add the new OAuth token
                                 $cookies.access_token = response.config.headers.Authorization = loginResponse.data.access_token;
@@ -87,9 +87,11 @@ comiccloudapp.config(function ($routeProvider, $locationProvider, $httpProvider)
                                     // we have a successful response - resolve it using deferred
                                     deferred.resolve(response);
                                 },function(response) {
+                                    console.log('wrong');
                                     deferred.reject(); // something went wrong
                                 });
                             } else {
+                                console.log('deferred');
                                 deferred.reject(); // login.json didn't give us data
                             }
                         }, function(response) {
@@ -98,6 +100,9 @@ comiccloudapp.config(function ($routeProvider, $locationProvider, $httpProvider)
                             return;
                         });
                         return deferred.promise; // return the deferred promise
+                    }else if(response.status===401 && response.data.error === "invalid_request"){
+                        $cookies.access_token = $cookies.refresh_token = null;
+                        $location.path('/');
                     }
                     return $q.reject(response); // not a recoverable error
                 });
@@ -142,7 +147,8 @@ comiccloudapp.factory('AuthService', function($q, $cookies, $location){
 
 comiccloudapp.constant( 'env_var', {
     apiBase : 'http://api.dev.comiccloud.io/v1',
-    clientBase : ''
+    clientBase : '',
+    imgHolder : '/images/comicHolder.gif'
 });
 
 

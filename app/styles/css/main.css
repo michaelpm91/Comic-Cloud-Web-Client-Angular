@@ -1,0 +1,38 @@
+/**
+* Global styles for Comic Cloud
+*/
+/**
+* _components 
+*
+* All of the base styles for each page
+*/
+/* 
+* Lib 
+*/
+/* 
+* Local
+*/
+/* 
+* Break points
+*/
+/*
+* Variables
+*/
+/**
+ * _base
+ *
+ * Base styles given to all pages
+ */
+body {
+  background: #F5F5F5;
+  font-family: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue", Calibri, Helvetica, Arial;
+  margin: 0; }
+
+/*
+* Importing CSS for breakpoints 
+*/
+/**
+* _320 
+*
+* Styles for smaller devices like smartphones
+*/

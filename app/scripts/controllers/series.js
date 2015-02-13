@@ -5,9 +5,9 @@
 
 angular.module('comicCloudClient')
     .controller('SeriesController', function ($cookies, $http, $location, $scope, $compile, $rootScope, $routeParams, comicFunctions, $upload, Series, Comic, env_var, uploadState) {
-        if (!$cookies.access_token) {
+        /*if (!$cookies.access_token) {
             $location.path('/login');
-        }
+        }*/
         $http.defaults.headers.common.Authorization = $cookies.access_token;
         $scope.cookies = $cookies;
         $scope.targetId;

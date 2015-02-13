@@ -57,11 +57,11 @@ body {
 }
 #comicControlOverlay #previousPageControl{
     left: 0;
-    background: url("../images/left-chevron.png") no-repeat center center !important;
+    background: url("../../images/left-chevron.png") no-repeat center center !important;
 }
 #comicControlOverlay #nextPageControl{
     right: 0;
-    background: url("../images/right-chevron.png") no-repeat center center !important;
+    background: url("../../images/right-chevron.png") no-repeat center center !important;
 }
 #comicControlOverlay #previousPageControl:hover, #comicControlOverlay #nextPageControl:hover{
     opacity:1.0;

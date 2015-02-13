@@ -77,7 +77,7 @@ progress[value] {
     right: 0;
     left: 0;
     bottom: 0;
-    background-image: url('../images/ajax-loader.gif');
+    background-image: url('../../images/ajax-loader.gif');
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-position: center;
@@ -174,11 +174,11 @@ progress[value] {
         width: 30%;
     }
     #comicControlOverlay #previousPageControl {
-        background: url("../images/left-chevron.png") no-repeat center center !important;
+        background: url("../../images/left-chevron.png") no-repeat center center !important;
     }
 
     #comicControlOverlay #nextPageControl {
-        background: url("../images/right-chevron.png") no-repeat center center !important;
+        background: url("../../images/right-chevron.png") no-repeat center center !important;
     }
 
     #comicControlOverlay #previousPageControl:hover, #comicControlOverlay #nextPageControl:hover {

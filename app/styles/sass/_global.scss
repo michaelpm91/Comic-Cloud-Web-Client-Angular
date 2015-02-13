@@ -1,0 +1,19 @@
+/* 
+* Break points
+*/
+$breakup-breakpoints: (
+    '320up' '(min-width: 320px)',
+    '400up' '(min-width: 400px)',
+    '480up' '(min-width: 480px)',
+    '600up' '(min-width: 600px)',
+    '768up' '(min-width: 768px)',
+    '800up' '(min-width: 800px)',
+    '1008up' '(min-width: 1008px)'
+);
+/*
+* Variables
+*/
+$cc-background : #F5F5F5;
+$cc-fonts: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue", Calibri, Helvetica, Arial;
+
+

@@ -149,6 +149,7 @@ angular.module('comicCloudClient')
 
 
         $scope.start = function(index) {
+            console.log('uplaod start');
 
             var file = $scope.selectedFiles[index];
 
