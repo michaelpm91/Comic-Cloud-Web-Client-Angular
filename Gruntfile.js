@@ -32,20 +32,16 @@ module.exports = function (grunt) {
     grunt.initConfig({
         sass: {
             dist: {
-                /*files: [{
-                    expand: true,
-                    cwd: 'styles',
-                    src: ['app/styles/sass/*.scss'],
-                    dest: 'app/style/css/',
-                    ext: '.css'
-                }]*/
                 options: {
-                    compress: false,
                     sourcemap: 'none'
                 },
-                files: {
-                    'app/styles/css/main.css': 'app/styles/sass/style.scss',
-                }
+                files: [{
+                    expand: true,
+                    cwd: 'app/styles/sass/',
+                    src: ['**/*.scss'],
+                    dest: 'app/styles/css',
+                    ext: '.css'
+                }]
             }
         }
     });

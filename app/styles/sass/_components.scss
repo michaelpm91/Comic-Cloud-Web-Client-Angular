@@ -7,13 +7,12 @@
 /* 
 * Lib 
 */
-//@import '/var/www/dev.comiccloud.io/node_modules/breakup-sass/stylesheets/breakup';
 @import 'breakup';
 
 /* 
 * Local
 */
-@import "global";
+@import "modules/global";
 @import "base";
 
 /*

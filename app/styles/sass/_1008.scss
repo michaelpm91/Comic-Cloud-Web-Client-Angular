@@ -1,0 +1,18 @@
+/**
+ * _1008
+ *
+ * Styles for large devices & desktop computers
+ */
+
+@include breakup-breakpoint('1008up') {
+
+  body{
+    .comicDisplay {
+      a {
+        .comicCard{
+          width:22.6%;
+        }
+      }
+    }
+  }
+}

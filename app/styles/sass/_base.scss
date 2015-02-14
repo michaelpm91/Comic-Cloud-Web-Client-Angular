@@ -7,4 +7,33 @@ body {
   background: $cc-background;
   font-family: $cc-fonts;
   margin: 0;
+
+  .comicDisplay {
+    margin: 100px auto;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    a {
+      .comicCard {
+        background: white;
+        box-shadow: 0 1px 2px #DCDCDC;
+        vertical-align: top;
+        display: inline-block;
+        margin-left: 1%;
+        margin-right: 1%;
+      }
+    }
+    a:link, a:visited {
+      text-decoration: none;
+      color: black;
+    }
+  }
+
+  .imgHide {
+    display: none !important;
+  }
 }
