@@ -10,13 +10,15 @@ var comiccloudapp = angular.module('comicCloudClient', [
     'ngRoute',
     'ngSanitize',
     'ngTouch',
-    'angularFileUpload'
+    'angularFileUpload',
+    'routeStyles'
 ]);
 comiccloudapp.config(function ($routeProvider, $locationProvider, $httpProvider) {
     $routeProvider
         .when('/library', {
             templateUrl: './views/library.html',
             controller: 'LibraryController',
+            css: ['./styles/css/modules/library/style.css', './styles/css/modules/menu/style.css'],
             resolve : {
                 auth : function(AuthService){
                     return AuthService.authenticate();
@@ -26,6 +28,7 @@ comiccloudapp.config(function ($routeProvider, $locationProvider, $httpProvider)
         .when('/s/:id', {
             templateUrl: './views/series.html',
             controller: 'SeriesController',
+            css: ['./styles/css/modules/library/style.css', './styles/css/modules/menu/style.css'],
             resolve : {
                 auth : function(AuthService){
                     return AuthService.authenticate();
@@ -35,6 +38,7 @@ comiccloudapp.config(function ($routeProvider, $locationProvider, $httpProvider)
         .when('/c/:id', {
             templateUrl: './views/comic.html',
             controller: 'ComicController',
+            css: './styles/css/modules/reader/style.css',
             resolve : {
                 auth : function(AuthService){
                     return AuthService.authenticate();
@@ -44,6 +48,7 @@ comiccloudapp.config(function ($routeProvider, $locationProvider, $httpProvider)
         .when('/login', {
             templateUrl: './views/login.html',
             controller: 'LoginController',
+            css: './styles/css/modules/login/style.css',
             resolve: {
                 auth: function (AuthService) {
                     return AuthService.redirectIfAuthenticated('/library');

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="comicCloudClient">
 <head lang="en">
     <base href="/">
     <meta charset="UTF-8">
@@ -24,6 +24,7 @@
     <script src="/scripts/bower_components/angular-route/angular-route.js"></script>
     <script src="/scripts/bower_components/angular-animate/angular-animate.js"></script>
     <script src="/scripts/bower_components/angular-touch/angular-touch.js"></script>
+    <script src="/scripts/bower_components/angular-route-styles/route-styles.js"></script>
     <!--Bower End-->
 
 
@@ -46,11 +47,7 @@
 
     <!-- JavaScript End-->
 </head>
-<body ng-app="comicCloudClient">
-	<div ng-controller="MainMenuController">	
-		<div ng-show="menuState.state()" id="menuIcon"></div>
-		<div id="mainMenu" main-menu></div>
-	</div>
+<body>
 	<div ng-view></div>
 </body>
 </html>

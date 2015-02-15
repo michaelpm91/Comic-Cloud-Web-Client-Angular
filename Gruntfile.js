@@ -43,6 +43,16 @@ module.exports = function (grunt) {
                     ext: '.css'
                 }]
             }
+        },
+        watch: {
+            options: {
+                nospawn: true,
+                livereload: true
+            },
+            sass: {
+                files: ['app/styles/sass/**/*.scss'],
+                tasks: ['sass:dist']
+            }
         }
     });
 
