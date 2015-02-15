@@ -1,15 +1,8 @@
-<a ng-href="{{url}}">
-    <div class='comicBlock'>
-        <img img-fallback ng-src="{{imageUrl}}"/>
-        <div class='comicBlockInformation'>{{information}}</div>
-		<progress ng-hide="!uploadProgress" value="{{uploadProgress}}" max="100"></progress>
+<a ng-href="c/{{comic.id}}">
+    <div class='comicCard'>
+        <img class="comicHoldingImage" ng-src="{{env_var.imgHolder}}">
+        <comic-cover-img image-id="{{comic.comic_collection[1]}}"></comic-cover-img>
+        <div class='comicCardInformation'>#{{comic.comic_issue}}</div>
+        <progress ng-hide="!currentUploads[series.id]['comics'][comic.id]['progress']" value="{{currentUploads[series.id]['comics'][comic.id]['progress']}}" max="100"></progress>
     </div>
 </a>
-
-<!--<a ng-href="{{'s/' + thisSeries.id}}">
-    <div class='comicBlock'>
-        <img ng-src="{{imageUrl}}"/>
-        <div class='comicBlockInformation'>{{thisSeries.series_title +' (' + thisSeries.series_start_year +')'}}</div>
-        <progress value="" max="100">{{progressAverage}}</progress>
-    </div>
-</a>-->

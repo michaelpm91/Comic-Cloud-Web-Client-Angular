@@ -222,35 +222,21 @@ comiccloudapp.directive('imgFallback', function () {
     }
     return fallbackSrc;
 });
-
-comiccloudapp.directive('comicCard', function(uploadState){
-    return {
-        restrict: 'AE',
-        scope: {
-            imageUrl : '=imageUrl',
-            url : '=url',
-            information : '=information',
-			seriesId : '=seriesId',
-            uploadProgress : '='
-        },
-        templateUrl: "./views/partials/comicCard.html"
-    };
-});
-comiccloudapp.directive('ncomicCard', function () {
+comiccloudapp.directive('comicCard', function () {
     return {
         restrict: 'E',
         replace: true,
-        templateUrl: "./views/partials/ncomicCard.html",
+        templateUrl: "./views/partials/comicCard.html",
         link: function (scope, elem, attrs) {
 
         }
     };
 });
-comiccloudapp.directive('nseriesCard', function () {
+comiccloudapp.directive('seriesCard', function () {
     return {
         restrict: 'E',
         replace: true,
-        templateUrl: "./views/partials/nseriesCard.html",
+        templateUrl: "./views/partials/seriesCard.html",
         link: function (scope, elem, attrs) {
 
         }
@@ -362,7 +348,7 @@ comiccloudapp.directive('comicReader', function($window){
         }
     }
 });
-comiccloudapp.directive('mainMenu', function(){
+comiccloudapp.directive('menu', function(){
     return {
         restrict: 'A',
         templateUrl: "./views/partials/mainMenu.html"
@@ -411,11 +397,6 @@ comiccloudapp.directive('editSeriesPanel', function(){
 comiccloudapp.directive('editComicPanel', function(){
     return {
         templateUrl: "./views/partials/editComicPanel.html"
-    };
-});
-comiccloudapp.directive('comicReaderMenu', function(){
-    return {
-        templateUrl: "./views/partials/comicReaderMenu.html"
     };
 });
 
