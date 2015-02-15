@@ -1,5 +1,6 @@
 {
   "name": "comic-cloud-client",
+  "directory": "app/scripts/bower_components",
   "version": "0.0.0",
   "dependencies": {
     "angular": "1.2.16",
@@ -10,7 +11,10 @@
     "angular-sanitize": "1.2.16",
     "angular-animate": "1.2.16",
     "angular-touch": "1.2.16",
-    "angular-route": "1.2.16"
+    "angular-route": "1.2.16",
+    "ng-file-upload-shim" : "1.6.7",
+    "ng-file-upload" : "1.6.7",
+    "angular-route-styles" : "*"
   },
   "devDependencies": {
     "angular-mocks": "1.2.16",

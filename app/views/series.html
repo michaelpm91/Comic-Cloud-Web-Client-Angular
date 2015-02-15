@@ -1,14 +1,3 @@
 <div id="series" class="comicDisplay" ng-file-drop="onFileSelect($files)" ng-click="clearSelection($event)">
     <ncomic-card comic="comic" ng-repeat="comic in series.comics | object2Array | orderBy:'comic_issue'"></ncomic-card>
 </div>
-<div id="comicContextMenu">
-    <ul class="menu">
-        <li>
-            <a ng-click="openEditModal()">Edit Comic</a>
-        </li>
-        <li>
-            <a ng-click="openDeleteModal()">Delete Comic</a>
-        </li>
-    </ul>
-</div>
-<div class="editPanel" ng-hide="true" edit-comic-panel></div>

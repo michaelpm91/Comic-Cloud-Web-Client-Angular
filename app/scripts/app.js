@@ -11,13 +11,14 @@ var comiccloudapp = angular.module('comicCloudClient', [
     'ngSanitize',
     'ngTouch',
     'angularFileUpload',
-    'ngDialog'
+    'routeStyles'
 ]);
 comiccloudapp.config(function ($routeProvider, $locationProvider, $httpProvider) {
     $routeProvider
         .when('/library', {
             templateUrl: './views/library.html',
             controller: 'LibraryController',
+            css: ['./styles/css/modules/library/style.css', './styles/css/modules/menu/style.css'],
             resolve : {
                 auth : function(AuthService){
                     return AuthService.authenticate();
@@ -27,6 +28,7 @@ comiccloudapp.config(function ($routeProvider, $locationProvider, $httpProvider)
         .when('/s/:id', {
             templateUrl: './views/series.html',
             controller: 'SeriesController',
+            css: ['./styles/css/modules/library/style.css', './styles/css/modules/menu/style.css'],
             resolve : {
                 auth : function(AuthService){
                     return AuthService.authenticate();
@@ -36,6 +38,7 @@ comiccloudapp.config(function ($routeProvider, $locationProvider, $httpProvider)
         .when('/c/:id', {
             templateUrl: './views/comic.html',
             controller: 'ComicController',
+            css: './styles/css/modules/reader/style.css',
             resolve : {
                 auth : function(AuthService){
                     return AuthService.authenticate();
@@ -45,6 +48,7 @@ comiccloudapp.config(function ($routeProvider, $locationProvider, $httpProvider)
         .when('/login', {
             templateUrl: './views/login.html',
             controller: 'LoginController',
+            css: './styles/css/modules/login/style.css',
             resolve: {
                 auth: function (AuthService) {
                     return AuthService.redirectIfAuthenticated('/library');
@@ -57,48 +61,6 @@ comiccloudapp.config(function ($routeProvider, $locationProvider, $httpProvider)
     // use the HTML5 History API
     $locationProvider.html5Mode(true);
 
-    /*$httpProvider.interceptors.push(function($q, $cookies, $location, $injector) {
-        return {
-            'responseError': function(rejection) {
-                // do something on error
-                //console.log(rejection);
-                if(rejection.status == 401){
-                    if($cookies.refresh_token){
-                        //var $http = $injector.get('$http');
-
-                        //$http.get('/');
-                        console.log(rejection.config);
-                        //return $http(rejection.config);
-                        var $http = $injector.get('$http');
-
-                        var data = {
-                            'grant_type' : 'refresh_token',
-                            'client_id' : '1',
-                            'client_secret' : 'secret',
-                            'refresh_token' : $cookies.refresh_token
-                        };
-                        $http({
-                            method  : 'POST',
-                            url     : 'http://dev.atomichael.com/Comic-Cloud-API/oauth/access_token',
-                            data    : $.param(data),
-                            headers : { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }
-                        }).success(function(data) {
-                            $cookies.access_token = data.access_token;
-                            //$location.path("/library");
-                            console.log(rejection.config.headers.Authorization);
-                            console.log(data.access_token);
-                            rejection.config.headers.Authorization = data.access_token;
-                            return $http(rejection.config);
-                        }).error(function(){
-                            //$cookies.access_token = $cookies.refresh_token = undefined;
-                            $location.path("/");
-                        });
-
-                    }
-                }
-            }
-        };
-    });*/
     $httpProvider.responseInterceptors.push(function($cookies, $q, $injector, $location, env_var){
             return function(promise) {
                 return promise.then(function(response) {
@@ -122,7 +84,7 @@ comiccloudapp.config(function ($routeProvider, $locationProvider, $httpProvider)
                             headers : { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }
                         }).then(function(loginResponse) {
                             console.log(loginResponse);
-                            if (loginResponse.data) {
+                            if (loginResponse.data && loginResponse.status != 401) {
                                 //$cookies.access_token = response.config.headers.Authorization = loginResponse.access_token;
                                 // now let's retry the original request - transformRequest in .run() below will add the new OAuth token
                                 $cookies.access_token = response.config.headers.Authorization = loginResponse.data.access_token;
@@ -130,9 +92,11 @@ comiccloudapp.config(function ($routeProvider, $locationProvider, $httpProvider)
                                     // we have a successful response - resolve it using deferred
                                     deferred.resolve(response);
                                 },function(response) {
+                                    console.log('wrong');
                                     deferred.reject(); // something went wrong
                                 });
                             } else {
+                                console.log('deferred');
                                 deferred.reject(); // login.json didn't give us data
                             }
                         }, function(response) {
@@ -141,6 +105,9 @@ comiccloudapp.config(function ($routeProvider, $locationProvider, $httpProvider)
                             return;
                         });
                         return deferred.promise; // return the deferred promise
+                    }else if(response.status===401 && response.data.error === "invalid_request"){
+                        $cookies.access_token = $cookies.refresh_token = null;
+                        $location.path('/');
                     }
                     return $q.reject(response); // not a recoverable error
                 });
@@ -184,8 +151,9 @@ comiccloudapp.factory('AuthService', function($q, $cookies, $location){
 });
 
 comiccloudapp.constant( 'env_var', {
-    apiBase : 'http://dev.atomichael.com/Comic-Cloud-API/api/v1',
-    clientBase : ''
+    apiBase : 'http://api.dev.comiccloud.io/v1',
+    clientBase : '',
+    imgHolder : '/images/comicHolder.gif'
 });
 
 

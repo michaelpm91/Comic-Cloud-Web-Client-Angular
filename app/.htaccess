@@ -1,4 +1,4 @@
-RewriteBase /Comic-Cloud-Client/app/
+#RewriteBase /Comic-Cloud-Client/app/
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

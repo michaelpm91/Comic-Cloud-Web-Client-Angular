@@ -1,0 +1,22 @@
+/**
+ * _600
+ *
+ * Styles for medium devices like tablets
+ */
+
+@include breakup-breakpoint('600up') {
+
+  body {
+    .comicDisplay {
+      a {
+        .comicCard img {
+          width: 95%;
+          display: block;
+          height: auto;
+          margin-left: auto;
+          margin-right: auto;
+        }
+      }
+    }
+  }
+}

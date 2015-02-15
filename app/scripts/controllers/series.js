@@ -4,10 +4,10 @@
 'use strict';
 
 angular.module('comicCloudClient')
-    .controller('SeriesController', function ($cookies, $http, $location, $scope, $compile, $rootScope, $routeParams, comicFunctions, ngDialog, $upload, Series, Comic, env_var, uploadState) {
-        if (!$cookies.access_token) {
+    .controller('SeriesController', function ($cookies, $http, $location, $scope, $compile, $rootScope, $routeParams, comicFunctions, $upload, Series, Comic, env_var, uploadState) {
+        /*if (!$cookies.access_token) {
             $location.path('/login');
-        }
+        }*/
         $http.defaults.headers.common.Authorization = $cookies.access_token;
         $scope.cookies = $cookies;
         $scope.targetId;
@@ -56,7 +56,7 @@ angular.module('comicCloudClient')
             });
         };
 
-        $scope.openDeleteModal = function () {
+        /*$scope.openDeleteModal = function () {
             console.log($scope.targetId);
             ngDialog.open({
                 template: './views/partials/deleteModal.html',
@@ -65,7 +65,7 @@ angular.module('comicCloudClient')
                     type: 'comic'
                 }
             });
-        };
+        };*/
 
 
         $scope.editThis = function(comicObject){

@@ -1,0 +1,24 @@
+/**
+* _components 
+*
+* All of the base styles for each page
+*/
+
+/* 
+* Lib 
+*/
+@import 'breakup';
+
+/* 
+* Local
+*/
+@import "modules/global";
+@import "base";
+
+/*
+* Importing CSS for breakpoints 
+*/
+@import "320";
+@import "480";
+@import "600";
+@import "1008";
