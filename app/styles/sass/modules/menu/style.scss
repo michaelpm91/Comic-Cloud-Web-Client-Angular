@@ -1,8 +1,7 @@
 @import "../../breakup";
 @import "../global";
-$breakup-included-blocks: ('320up' '400up' '600up' '800up' '1008up');
+$breakup-included-blocks: ('mobile' 'tablet' 'desktop');
 @import "base";
-@import "400";
-@import "600";
-@import "800";
-@import "1008";
+@import "tablet";
+@import "tablet";
+@import "desktop";
