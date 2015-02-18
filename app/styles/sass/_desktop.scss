@@ -1,11 +1,10 @@
 /**
- * _600
- *
- * Styles for medium devices like tablets
- */
+* _desktop
+*
+* Styles for Desktop Devices
+*/
 
-@include breakup-breakpoint('600up') {
-
+@include breakup-breakpoint('desktop') {
   body {
     .comicDisplay {
       a {

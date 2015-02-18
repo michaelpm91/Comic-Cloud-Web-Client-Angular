@@ -18,7 +18,6 @@
 /*
 * Importing CSS for breakpoints 
 */
-@import "320";
-@import "480";
-@import "600";
-@import "1008";
+@import "mobile";
+@import "tablet";
+@import "desktop";
