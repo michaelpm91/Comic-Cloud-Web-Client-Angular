@@ -35,6 +35,7 @@ module.exports = function (grunt) {
                 options: {
                     sourcemap: 'none'
                 },
+                //TODO: decide whether to concat or dynamically load modules.
                 files: [{
                     expand: true,
                     cwd: 'app/styles/sass/',

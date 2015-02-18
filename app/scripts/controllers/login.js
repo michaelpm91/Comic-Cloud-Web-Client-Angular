@@ -2,7 +2,7 @@
  * Created by Michael on 19/09/2014.
  */
 'use strict';
-
+//TODO: Refactor to be responsible for all authentication ie logout
 angular.module('comicCloudClient')
     .controller('LoginController', function ($location, $cookies, $http, $scope, env_var) {
         $scope.submit = function(user){
