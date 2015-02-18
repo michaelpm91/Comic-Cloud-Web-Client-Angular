@@ -18,5 +18,36 @@ $breakup-breakpoints: (
 */
 $cc-background : #F5F5F5;
 $cc-fonts: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue", Calibri, Helvetica, Arial;
+$link-colour: #1485CC;
 
-
+//http://zerosixthree.se/8-sass-mixins-you-must-have-in-your-toolbox/
+@mixin animation ($str) {
+    -webkit-animation: #{$str}; /* Safari, Chrome and Opera > 12.1 */
+    -moz-animation: #{$str}; /* Firefox < 16 */
+    -ms-animation: #{$str}; /* Internet Explorer */
+    -o-animation: #{$str}; /* Opera < 12.1 */
+    animation: #{$str};
+}
+@mixin keyframes($animation-name) {
+    @-webkit-keyframes $animation-name {
+        @content;
+    }
+    @-moz-keyframes $animation-name {
+        @content;
+    }
+    @-ms-keyframes $animation-name {
+        @content;
+    }
+    @-o-keyframes $animation-name {
+        @content;
+    }
+    @keyframes $animation-name {
+        @content;
+    }
+}
+//Usage:  @include opacity(0.8);
+@mixin opacity($opacity) {
+    opacity: $opacity;
+    $opacity-ie: $opacity * 100;
+    filter: alpha(opacity=$opacity-ie); //IE8
+}
