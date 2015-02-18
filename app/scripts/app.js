@@ -351,7 +351,7 @@ comiccloudapp.directive('comicReader', function($window){
 comiccloudapp.directive('menu', function(){
     return {
         restrict: 'A',
-        templateUrl: "./views/partials/mainMenu.html"
+        templateUrl: "./views/partials/menu.html"
     };
 });
 comiccloudapp.factory('menuState', function(){
