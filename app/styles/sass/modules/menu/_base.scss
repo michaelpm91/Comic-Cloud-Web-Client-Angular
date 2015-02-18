@@ -4,10 +4,8 @@
 .menu{
   position: fixed;
   width: 100%;
-  top: 0;
   background-color: white;
   height: 60px;
-  border-bottom: solid 2px #DCDCDC;
   z-index: 9999;
   ul {
     padding: 0;
@@ -16,4 +14,21 @@
   a:hover{
     color: $link-colour;
   }
+}
+.menu.menu-library{
+  top: 0;
+  border-bottom: solid 2px #DCDCDC;
+}
+.menu.menu-comic{
+  @include opacity(0.8);
+  top: 0;
+  //border-bottom: solid 2px #DCDCDC;
+}
+.menu.menu-comic-nav{
+  @include opacity(0.8);
+  bottom: 0;
+  //border-top: solid 2px #DCDCDC;
+}
+.menu.menu-comic-nav, .menu.menu-comic {
+  background-color: black;
 }

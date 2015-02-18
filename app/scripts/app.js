@@ -18,7 +18,7 @@ comiccloudapp.config(function ($routeProvider, $locationProvider, $httpProvider)
         .when('/library', {
             templateUrl: './views/library.html',
             controller: 'LibraryController',
-            css: ['./styles/css/modules/library/style.css', './styles/css/modules/menu/style.css'],
+            css: ['./styles/css/modules/library/style.css', './styles/css/modules/menu-library/style.css'],
             resolve : {
                 auth : function(AuthService){
                     return AuthService.authenticate();
@@ -38,7 +38,7 @@ comiccloudapp.config(function ($routeProvider, $locationProvider, $httpProvider)
         .when('/c/:id', {
             templateUrl: './views/comic.html',
             controller: 'ComicController',
-            css: './styles/css/modules/reader/style.css',
+            css: ['./styles/css/modules/reader/style.css', './styles/css/modules/menu/style.css'],
             resolve : {
                 auth : function(AuthService){
                     return AuthService.authenticate();
@@ -61,58 +61,58 @@ comiccloudapp.config(function ($routeProvider, $locationProvider, $httpProvider)
     // use the HTML5 History API
     $locationProvider.html5Mode(true);
 
-    $httpProvider.responseInterceptors.push(function($cookies, $q, $injector, $location, env_var){
-            return function(promise) {
-                return promise.then(function(response) {
-                    return response; // no action, was successful
-                }, function (response) {
-                    // error - was it 401 or something else?
-                    //if (response.status===401 && response.data.error && response.data.error === "invalid_token") {
-                    if (response.status===401){
-                        var deferred = $q.defer(); // defer until we can re-request a new token
-                        // Get a new token... (cannot inject $http directly as will cause a circular ref)
-                        var data = {
-                            'grant_type' : 'refresh_token',
-                            'client_id' : '1',
-                            'client_secret' : 'secret',
-                            'refresh_token' : $cookies.refresh_token
-                        };
-                        $injector.get('$http')({
-                            method  : 'POST',
-                            url     : env_var.apiBase + '/oauth/access_token',
-                            data    : $.param(data),
-                            headers : { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }
-                        }).then(function(loginResponse) {
-                            console.log(loginResponse);
-                            if (loginResponse.data && loginResponse.status != 401) {
-                                //$cookies.access_token = response.config.headers.Authorization = loginResponse.access_token;
-                                // now let's retry the original request - transformRequest in .run() below will add the new OAuth token
-                                $cookies.access_token = response.config.headers.Authorization = loginResponse.data.access_token;
-                                $injector.get("$http")(response.config).then(function(response) {
-                                    // we have a successful response - resolve it using deferred
-                                    deferred.resolve(response);
-                                },function(response) {
-                                    console.log('wrong');
-                                    deferred.reject(); // something went wrong
-                                });
-                            } else {
-                                console.log('deferred');
-                                deferred.reject(); // login.json didn't give us data
-                            }
-                        }, function(response) {
-                            deferred.reject(); // token retry failed, redirect so user can login again
-                            $location.path('/');
-                            return;
-                        });
-                        return deferred.promise; // return the deferred promise
-                    }else if(response.status===401 && response.data.error === "invalid_request"){
-                        $cookies.access_token = $cookies.refresh_token = null;
+    /*$httpProvider.responseInterceptors.push(function($cookies, $q, $injector, $location, env_var){
+        return function(promise) {
+            return promise.then(function(response) {
+                return response; // no action, was successful
+            }, function (response) {
+                // error - was it 401 or something else?
+                //if (response.status===401 && response.data.error && response.data.error === "invalid_token") {
+                if (response.status===401){
+                    var deferred = $q.defer(); // defer until we can re-request a new token
+                    // Get a new token... (cannot inject $http directly as will cause a circular ref)
+                    var data = {
+                        'grant_type' : 'refresh_token',
+                        'client_id' : '1',
+                        'client_secret' : 'secret',
+                        'refresh_token' : $cookies.refresh_token
+                    };
+                    $injector.get('$http')({
+                        method  : 'POST',
+                        url     : env_var.apiBase + '/oauth/access_token',
+                        data    : $.param(data),
+                        headers : { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }
+                    }).then(function(loginResponse) {
+                        console.log(loginResponse);
+                        if (loginResponse.data && loginResponse.status != 401) {
+                            //$cookies.access_token = response.config.headers.Authorization = loginResponse.access_token;
+                            // now let's retry the original request - transformRequest in .run() below will add the new OAuth token
+                            $cookies.access_token = response.config.headers.Authorization = loginResponse.data.access_token;
+                            $injector.get("$http")(response.config).then(function(response) {
+                                // we have a successful response - resolve it using deferred
+                                deferred.resolve(response);
+                            },function(response) {
+                                console.log('wrong');
+                                deferred.reject(); // something went wrong
+                            });
+                        } else {
+                            console.log('deferred');
+                            deferred.reject(); // login.json didn't give us data
+                        }
+                    }, function(response) {
+                        deferred.reject(); // token retry failed, redirect so user can login again
                         $location.path('/');
-                    }
-                    return $q.reject(response); // not a recoverable error
-                });
-            };
-        });
+                        return;
+                    });
+                    return deferred.promise; // return the deferred promise
+                }else if(response.status===401 && response.data.error === "invalid_request"){
+                    $cookies.access_token = $cookies.refresh_token = null;
+                    $location.path('/');
+                }
+                return $q.reject(response); // not a recoverable error
+            });
+        };
+    });*/
 
 });
 
@@ -348,11 +348,25 @@ comiccloudapp.directive('comicReader', function($window){
         }
     }
 });
-comiccloudapp.directive('menu', function(){
+comiccloudapp.directive('menuLibrary', function(){
     return {
         restrict: 'E',
         replace: true,
-        templateUrl: "./views/partials/menu.html"
+        templateUrl: "./views/partials/menu-library.html"
+    };
+});
+comiccloudapp.directive('menuComic', function(){
+    return {
+        restrict: 'E',
+        replace: true,
+        templateUrl: "./views/partials/menu-comic.html"
+    };
+});
+comiccloudapp.directive('menuComicNav', function(){
+    return {
+        restrict: 'E',
+        replace: true,
+        templateUrl: "./views/partials/menu-comic-nav.html"
     };
 });
 comiccloudapp.factory('menuState', function(){
