@@ -1,3 +1,17 @@
 @include breakup-breakpoint('desktop') {
-
+  .menu{
+    ul{
+      margin: 0 auto;
+      width: 78%;
+      max-width: 1600px;
+      text-align: right;
+      li {
+        display: inline-block;
+        margin: 20px 1%;
+      }
+      li:last-child {
+        margin-right: 0;
+      }
+    }
+  }
 }
