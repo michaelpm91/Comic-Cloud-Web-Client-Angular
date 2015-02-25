@@ -8,6 +8,8 @@ angular.module('comicCloudClient')
         /*if (!$cookies.access_token) {
             $location.path('/login');
         }*/
+        $rootScope.menu_show = true;
+
         $http.defaults.headers.common.Authorization = $cookies.access_token;
         $scope.cookies = $cookies;
         $scope.targetId;

@@ -38,7 +38,6 @@
     <script src="/scripts/controllers/library.js"></script>
     <script src="/scripts/controllers/series.js"></script>
     <script src="/scripts/controllers/comic.js"></script>
-    <script src="/scripts/controllers/mainMenu.js"></script>
     <!--Controllers End-->
     <!--Directives-->
     <script src="/scripts/directives/ngRightClick.js"></script>
@@ -48,7 +47,7 @@
     <!-- JavaScript End-->
 </head>
 <body>
-    <menu-library></menu-library>
+    <menu-library ng-show="$root.menu_show" class="{{$root.menu_show}}"></menu-library>
 	<div ng-view></div>
 </body>
 </html>

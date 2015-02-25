@@ -13,6 +13,10 @@ var comiccloudapp = angular.module('comicCloudClient', [
     'angularFileUpload',
     'routeStyles'
 ]);
+
+/**
+ * Config
+ */
 comiccloudapp.config(function ($routeProvider, $locationProvider, $httpProvider) {
     $routeProvider
         .when('/library', {
@@ -116,7 +120,32 @@ comiccloudapp.config(function ($routeProvider, $locationProvider, $httpProvider)
 
 });
 
+/**
+ * Filters
+ */
+comiccloudapp.filter('object2Array', function() {
+    return function(input) {
+        var out = [];
+        for(var i in input){
+            out.push(input[i]);
+        }
+        return out;
+    }
+});
 
+
+/**
+ * Constants
+ */
+comiccloudapp.constant( 'env_var', {
+    apiBase : 'http://api.dev.comiccloud.io/v1',
+    clientBase : '',
+    imgHolder : '/images/comicHolder.gif'
+});
+
+/**
+ * Factories
+ */
 comiccloudapp.factory('AuthService', function($q, $cookies, $location){
     return {
         authenticate : function(){
@@ -150,13 +179,6 @@ comiccloudapp.factory('AuthService', function($q, $cookies, $location){
     }
 });
 
-comiccloudapp.constant( 'env_var', {
-    apiBase : 'http://api.dev.comiccloud.io/v1',
-    clientBase : '',
-    imgHolder : '/images/comicHolder.gif'
-});
-
-
 comiccloudapp.factory('Series', function($resource, $cookies, env_var) {
     var urlBase = env_var.apiBase +'/series/:id';//'http://api.comiccloud.io/0.1/series/:id';
     return $resource(urlBase, {}, {
@@ -166,6 +188,7 @@ comiccloudapp.factory('Series', function($resource, $cookies, env_var) {
         }
     });
 });
+
 comiccloudapp.factory('Comic',function($resource, $cookies, env_var) {
     var urlBase = env_var.apiBase + '/comic/:id';//'http://api.comiccloud.io/0.1/comic/:id';
     return $resource(urlBase, {}, {
@@ -175,15 +198,7 @@ comiccloudapp.factory('Comic',function($resource, $cookies, env_var) {
         }
     });
 });
-comiccloudapp.filter('object2Array', function() {
-    return function(input) {
-        var out = [];
-        for(var i in input){
-            out.push(input[i]);
-        }
-        return out;
-    }
-});
+
 comiccloudapp.factory('comicFunctions', function () {
     return {
         genID: function () {
@@ -197,7 +212,7 @@ comiccloudapp.factory('comicFunctions', function () {
         },
         getComicInformation: function(fileName){
 
-			fileName = fileName.replace(/_/g, " ").replace(/\.[a-z0-9A-Z]+$/g, "");
+            fileName = fileName.replace(/_/g, " ").replace(/\.[a-z0-9A-Z]+$/g, "");
             var seriesTitle = (fileName.replace(/ (Vol\. ?|Volume )\d+| ?#\d+| \d+ ?|\(.*?\)/ig, "").trim() ? fileName.replace(/ (Vol\. ?|Volume )\d+| ?#\d+| \d+ ?|\(.*?\)/ig, "").trim() : 'Unknown');
             var seriesStartYear = (fileName.match(' ?(\\d{4}) ?') ? fileName.match(' ?(\\d{4}) ?')[1] : new Date().getFullYear());
             var comicIssue = (parseInt(fileName.match('#(\\d+)') ? fileName.match('#(\\d+)')[1] : (fileName.match(' (\\d+) ') ? fileName.match(' (\\d+) ')[1] : 1  ), 10));
@@ -212,6 +227,39 @@ comiccloudapp.factory('comicFunctions', function () {
     }
 });
 
+comiccloudapp.factory('page', function() {
+    var title = 'default';
+    return {
+        title: function() { return title; },
+        setTitle: function(newTitle) { title = newTitle }
+    };
+});
+
+comiccloudapp.factory('uploadState', function(){
+    var factory = {};
+    factory.currentUploads = {};
+    factory.progressAverage = function(targetSeriesID) {
+
+        if(!factory.currentUploads.hasOwnProperty(targetSeriesID)){
+            return 0;
+        } else {
+            var lengthOfUploads = Object.keys(factory.currentUploads[targetSeriesID]['comics']).length;
+            var total = 0;
+            if (lengthOfUploads == 0) return 0;
+            angular.forEach(factory.currentUploads[targetSeriesID]['comics'], function (value, key) {
+                total += parseInt(value['progress']);
+            });
+            var finalTotal = total / (lengthOfUploads * 100) * 100;
+
+            return finalTotal;
+        }
+    }
+    return factory;
+});
+
+/**
+ * Directives
+ */
 comiccloudapp.directive('imgFallback', function () {
     var fallbackSrc = {
         link: function postLink(scope, iElement, iAttrs) {
@@ -222,6 +270,7 @@ comiccloudapp.directive('imgFallback', function () {
     }
     return fallbackSrc;
 });
+
 comiccloudapp.directive('comicCard', function () {
     return {
         restrict: 'E',
@@ -232,6 +281,7 @@ comiccloudapp.directive('comicCard', function () {
         }
     };
 });
+
 comiccloudapp.directive('seriesCard', function () {
     return {
         restrict: 'E',
@@ -242,6 +292,7 @@ comiccloudapp.directive('seriesCard', function () {
         }
     }
 });
+
 comiccloudapp.directive('comicCoverImg', function($window) {
     return {
         restrict: 'E',
@@ -258,29 +309,19 @@ comiccloudapp.directive('comicCoverImg', function($window) {
                     elem.attr("ng-src", attrs.waiting);
                 });
             }, 3000);*/
-            if ($window.innerWidth >= 1200) {
-                scope.imageSize = 600;
-            } else if ($window.innerWidth < 1200) {
-                scope.imageSize = 450;
-            }
-            angular.element(window).resize(function () {
-                scope.$apply(function () {
-                    if ($window.innerWidth >= 1200) {
-                        scope.imageSize = 600;
-                    } else if ($window.innerWidth < 1200) {
-                        scope.imageSize = 450;
-                    }
-                });
-            });
+
         }
     }
 });
-comiccloudapp.directive('comicPageImg', function($window) {
+
+comiccloudapp.directive('comicPageImg', function($window, $document) {
     return {
         restrict: 'E',
         replace: true,
         template: '<img class="comicImg" ng-src="{{env_var.apiBase}}{{imageId}}/{{imageSize}}?access_token={{cookies.access_token}}">',
         link: function(scope, elem, attrs) {
+
+            //Image Ready
             scope.imageId = attrs.imageId;
             elem.bind('load', function() {
                 console.log('image loaded @ ' + attrs.imageId);
@@ -290,25 +331,63 @@ comiccloudapp.directive('comicPageImg', function($window) {
 
             });
 
-            //angular.element("#comicReader img").first().removeClass('imgHide');
-
-            if($window.innerWidth >= 1200){
-                scope.imageSize = 1500;
-            }else if($window.innerWidth < 1200){
-                scope.imageSize = 1000;
-            }
-            angular.element(window).resize(function(){
-                scope.$apply(function () {
-                    if($window.innerWidth >= 1200){
-                        scope.imageSize = 1500;
-                    }else if($window.innerWidth < 1200){
-                        scope.imageSize = 1000;
-                    }
-                });
+            //Draggable
+            var startX = 0, startY = 0, x = 0, y = 0;
+            elem.css({
+                position: 'relative',
+                border: '1px solid red',
+                cursor: 'pointer'
             });
+
+            elem.on('mousedown', function(event) {
+                // Prevent default dragging of selected content
+                event.preventDefault();
+                startX = event.pageX - x;
+                startY = event.pageY - y;
+                $document.on('mousemove', mousemove);
+                $document.on('mouseup', mouseup);
+            });
+
+            function mousemove(event) {
+                y = event.pageY - startY;
+                x = event.pageX - startX;
+
+                var maskWidth  = angular.element("#comicReader").width();//$("#my-mask").width();
+                var maskHeight = angular.element("#comicReader").height();//$("#my-mask").height();
+                var imgPos     = elem.offset();//$("#my-image").offset();
+                var imgWidth   = elem.width();//$("#my-image").width();
+                var imgHeight  = elem.height();//$("#my-image").height();
+
+                var x1 = imgPos.left;
+                var y1 = imgPos.top;
+                var x2 = (imgPos.left + maskWidth) - imgWidth;
+                var y2 = (imgPos.top + maskHeight) - imgHeight;
+
+                if( y1 >= 0 || y2 <= 0) y = 0;
+
+                if( x1 <= 0) x = 2 - ((maskWidth /2 ) - (imgWidth / 2));//(0 - (imgWidth * 2.5));
+
+
+                //if( x2 == maskWidth) x = maskWidth;
+
+                console.log('x:' + x + ' y:' + y + ' x1: '+ x1 +' y1: ' + y1 + ' x2: ' + x2 + ' y2: '+ y2);
+
+                elem.css({
+                    top: y + 'px',
+                    left:  x + 'px'
+                });
+            }
+
+            function mouseup() {
+                $document.off('mousemove', mousemove);
+                $document.off('mouseup', mouseup);
+            }
+
+
         }
     }
 });
+
 comiccloudapp.directive('loadingScreen', function() {
     return {
         restrict: 'E',
@@ -348,6 +427,7 @@ comiccloudapp.directive('comicReader', function($window){
         }
     }
 });
+
 comiccloudapp.directive('menuLibrary', function(){
     return {
         restrict: 'E',
@@ -355,6 +435,7 @@ comiccloudapp.directive('menuLibrary', function(){
         templateUrl: "./views/partials/menu-library.html"
     };
 });
+
 comiccloudapp.directive('menuComic', function(){
     return {
         restrict: 'E',
@@ -362,6 +443,7 @@ comiccloudapp.directive('menuComic', function(){
         templateUrl: "./views/partials/menu-comic.html"
     };
 });
+
 comiccloudapp.directive('menuComicNav', function(){
     return {
         restrict: 'E',
@@ -369,49 +451,15 @@ comiccloudapp.directive('menuComicNav', function(){
         templateUrl: "./views/partials/menu-comic-nav.html"
     };
 });
-comiccloudapp.factory('menuState', function(){
-	var state = false;
-	return{
-		state: function() { return state; },
-		setState: function(newState) { state = newState }
-	};
-});
-comiccloudapp.factory('page', function() {
-	var title = 'default';
-	return {
-		title: function() { return title; },
-		setTitle: function(newTitle) { title = newTitle }
-   };
-});
-comiccloudapp.factory('uploadState', function(){
-    var factory = {};
-    factory.currentUploads = {};
-    factory.progressAverage = function(targetSeriesID) {
 
-        if(!factory.currentUploads.hasOwnProperty(targetSeriesID)){
-            return 0;
-        } else {
-            var lengthOfUploads = Object.keys(factory.currentUploads[targetSeriesID]['comics']).length;
-            var total = 0;
-            if (lengthOfUploads == 0) return 0;
-            angular.forEach(factory.currentUploads[targetSeriesID]['comics'], function (value, key) {
-                total += parseInt(value['progress']);
-            });
-            var finalTotal = total / (lengthOfUploads * 100) * 100;
-
-            return finalTotal;
-        }
-    }
-    return factory;
-});
 comiccloudapp.directive('editSeriesPanel', function(){
     return {
         templateUrl: "./views/partials/editSeriesPanel.html"
     };
 });
+
 comiccloudapp.directive('editComicPanel', function(){
     return {
         templateUrl: "./views/partials/editComicPanel.html"
     };
 });
-

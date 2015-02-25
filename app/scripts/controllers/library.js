@@ -4,15 +4,12 @@
 'use strict';
 
 angular.module('comicCloudClient')
-    .controller('LibraryController', function ($cookies, $http, $location, $scope, $rootScope, $upload, $document, $compile, $timeout, $interval, Series, Comic, comicFunctions, menuState, env_var, uploadState) {
+    .controller('LibraryController', function ($cookies, $http, $location, $scope, $rootScope, $upload, $document, $compile, $timeout, $interval, Series, Comic, comicFunctions, env_var, uploadState) {
         /*if (!$cookies.access_token) {
             return $location.path('/login');
         }*/
 
-        /*$scope.showMenuIcon = function(){
-         return true;
-         }*/
-        menuState.setState(true);
+        $rootScope.menu_show = true;
 
         $http.defaults.headers.common.Authorization = $cookies.access_token;
         $scope.cookies = $cookies;

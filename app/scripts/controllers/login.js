@@ -4,11 +4,10 @@
 'use strict';
 //TODO: Refactor to be responsible for all authentication ie logout
 angular.module('comicCloudClient')
-    .controller('LoginController', function ($location, $cookies, $http, $scope, env_var) {
+    .controller('LoginController', function ($location, $cookies, $http, $scope, env_var, $rootScope) {
         $scope.submit = function(user){
-            var showMenuIcon = function(){
-                return false;
-            }
+
+            $rootScope.menu_show = false;
 
             var data = {
                 'grant_type' : 'password',

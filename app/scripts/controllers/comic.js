@@ -4,10 +4,12 @@
 
 angular.module('comicCloudClient')
     .controller('ComicController',
-        function ($cookies, $http, $location, $scope, $routeParams, Comic, env_var) {
+        function ($cookies, $http, $location, $rootScope, $scope, $routeParams, Comic, env_var) {
             /*if(!$cookies.access_token){
                 $location.path('/login');
             }*/
+            $rootScope.menu_show = false;
+
             $http.defaults.headers.common.Authorization = $cookies.access_token;
             $scope.cookies = $cookies;
             $scope.env_var = env_var;
