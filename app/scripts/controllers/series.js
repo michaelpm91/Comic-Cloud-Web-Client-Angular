@@ -9,8 +9,10 @@ angular.module('comicCloudClient')
             $location.path('/login');
         }*/
         $rootScope.menu_show = true;
+        $rootScope.current_view = "series";
 
         $http.defaults.headers.common.Authorization = $cookies.access_token;
+        //$http.defaults.cache = true;//Cache every HTTP request
         $scope.cookies = $cookies;
         $scope.targetId;
         $scope.env_var = env_var;

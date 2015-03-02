@@ -179,22 +179,24 @@ comiccloudapp.factory('AuthService', function($q, $cookies, $location){
     }
 });
 
-comiccloudapp.factory('Series', function($resource, $cookies, env_var) {
+comiccloudapp.factory('Series', function($cacheFactory, $resource, $cookies, env_var) {
     var urlBase = env_var.apiBase +'/series/:id';//'http://api.comiccloud.io/0.1/series/:id';
     return $resource(urlBase, {}, {
         update: {
             method: 'PATCH',
-            params: {id: '@id'}
+            params: {id: '@id'},
+            cache : true
         }
     });
 });
 
-comiccloudapp.factory('Comic',function($resource, $cookies, env_var) {
+comiccloudapp.factory('Comic',function($cacheFactory, $resource, $cookies, env_var) {
     var urlBase = env_var.apiBase + '/comic/:id';//'http://api.comiccloud.io/0.1/comic/:id';
     return $resource(urlBase, {}, {
         update: {
             method: 'PATCH',
-            params: { id: '@id'}
+            params: { id: '@id'},
+            cache : true
         }
     });
 });
@@ -314,10 +316,124 @@ comiccloudapp.directive('comicCoverImg', function($window) {
     }
 });
 
+
+comiccloudapp.directive('comicReader', function($window, $document){
+    return {
+        restrict: 'E',
+        replace: true,
+        transclude: true,
+        templateUrl: "./views/partials/comicReader.html",
+        controller: function($scope) {
+            $scope.readerStatus = "loading";
+
+            //$scope.page = 1;
+            $scope.currentPage = 1;
+            $scope.zoomLevel = 1;
+            $scope.currentComic = [];
+
+            $scope.loadPages = function(start, end){
+                console.log('loading pages from: ' + start + ' to: ' + end);
+                $scope.readerStatus = 'loading-more';
+
+                for (var i = start; i <= end; i++) {
+                    if(i < $scope.comicLength) {
+                        $scope.currentComic.push($scope.comic.comic_collection[i]);
+                        if (!$scope.$$phase) $scope.$apply(); //TODO: This is pretty hacky. Please fix.
+                    }
+                }
+            };
+            $scope.incrementCurrentlyLoaded = function(){
+                $scope.currentlyLoaded++;
+                if($scope.currentlyLoaded == $scope.loadTarget){
+                    console.log('Reader Status: ready');
+                    $scope.readerStatus = 'ready';
+                }
+            }
+
+            /*$scope.changePage = function (value) {
+                if($scope.readerStatus == 'loading'){
+
+                }else{
+
+                    page += value;
+                    page = Math.min(Math.max(page, 1), $scope.comicLength);
+                    angular.element("#comicReader .comicImg").removeClass('active');
+                    angular.element("#comicReader .comicImg:nth-child(" + page + ")").addClass('active');
+
+                    if((page + 2) == $scope.currentlyLoaded && $scope.readerStatus != 'loading-more'){
+                        $scope.loadPages($scope.currentlyLoaded + 1, $scope.currentlyLoaded + 1 + initialLoad);
+                    }
+                }
+            };
+
+            var handler = function(e){
+                if(e.keyCode === 37) {//Left
+                    $scope.changePage(-1);
+                }
+                if(e.keyCode === 39) {//Right
+                    $scope.changePage(1);
+                }
+                if(e.keyCode === 83) {//S - For Status
+                    //console.log($scope.currentPage);
+                    //console.log($scope.readerStatus);
+                    console.log('Currently Loaded: ' + $scope.currentlyLoaded);
+                    console.log('Page No: ' +page);
+                    console.log($scope.currentComic);
+                }
+                if(e.keyCode === 90){
+                    $scope.zoomLevel++;
+                    console.log($scope.zoomLevel);
+                }
+            };
+
+            var $doc = angular.element(document);
+
+            $doc.on('keydown', handler);
+
+            $scope.$on('$destroy',function(){
+                $doc.off('keydown', handler);
+            });*/
+
+        },
+        link: function (scope, elem, attrs) {
+            var changePage = function(value){
+                if(scope.readerStatus == 'loading'){
+
+                }else{
+                    scope.page += value;
+                    scope.page = Math.min(Math.max(page, 1), $scope.comicLength);
+                    angular.element("#comicReader .comicImg").removeClass('active');
+                    angular.element("#comicReader .comicImg:nth-child(" + page + ")").addClass('active');
+
+                    //if((page + 2) == $scope.currentlyLoaded && $scope.readerStatus != 'loading-more'){
+                        //$scope.loadPages($scope.currentlyLoaded + 1, $scope.currentlyLoaded + 1 + initialLoad);
+                    //}
+                }
+            }
+            angular.element("body").on("keyup", function (event) {
+                console.log('zoom');
+            });
+        }
+
+    }
+});
+
+comiccloudapp.directive('comicReaderControls', function() {
+    return {
+        restrict: 'E',
+        replace: true,
+        templateUrl: "./views/partials/comicReaderControls.html",
+        link: function (scope, elem, attrs) {
+
+        }
+    }
+});
+
 comiccloudapp.directive('comicPageImg', function($window, $document) {
     return {
         restrict: 'E',
         replace: true,
+        //require: '^comicReader',
         template: '<img class="comicImg" ng-src="{{env_var.apiBase}}{{imageId}}/{{imageSize}}?access_token={{cookies.access_token}}">',
         link: function(scope, elem, attrs) {
 
@@ -326,7 +442,7 @@ comiccloudapp.directive('comicPageImg', function($window, $document) {
             elem.bind('load', function() {
                 console.log('image loaded @ ' + attrs.imageId);
                 //angular.element(this).removeClass('imgHide').siblings('img.comicHoldingImage').addClass('imgHide');
-                scope.incrementCurrentlyLoadedCount();
+                scope.incrementCurrentlyLoaded();
                 if(angular.element(this).index() === 0) angular.element(this).addClass('active');
 
             });
@@ -334,8 +450,8 @@ comiccloudapp.directive('comicPageImg', function($window, $document) {
             //Draggable
             var startX = 0, startY = 0, x = 0, y = 0;
             elem.css({
-                position: 'relative',
-                border: '1px solid red',
+                //position: 'relative',
+                //border: '1px solid red',
                 cursor: 'pointer'
             });
 
@@ -363,18 +479,33 @@ comiccloudapp.directive('comicPageImg', function($window, $document) {
                 var x2 = (imgPos.left + maskWidth) - imgWidth;
                 var y2 = (imgPos.top + maskHeight) - imgHeight;
 
-                if( y1 >= 0 || y2 <= 0) y = 0;
+                //if( y1 >= 0 || y2 <= 0) y = 0;
 
-                if( x1 <= 0) x = 2 - ((maskWidth /2 ) - (imgWidth / 2));//(0 - (imgWidth * 2.5));
-
+                //if( x1 + imgWidth > maskWidth ) console.log('right');//x = maskWidth + imgWidth;
+                //if (x2 <= 0) x = 0;
+                //if( x1 <= -1) x = 0 - ((maskWidth /2 ) - (imgWidth / 2));//(0 - (imgWidth * 2.5));
+                //if (x2 <= 0) x = 0;
+                /*evt = evt || window.event;
+                 var posX = evt.clientX,
+                 posY = evt.clientY,
+                 aX = posX - diffX,
+                 aY = posY - diffY;
+                 if (aX < 0) aX = 0;
+                 if (aY < 0) aY = 0;
+                 if (aX + eWi > cWi) aX = cWi - eWi;
+                 if (aY + eHe > cHe) aY = cHe -eHe;
+                 mydragg.move(divid,aX,aY);*/
 
                 //if( x2 == maskWidth) x = maskWidth;
 
                 console.log('x:' + x + ' y:' + y + ' x1: '+ x1 +' y1: ' + y1 + ' x2: ' + x2 + ' y2: '+ y2);
 
+                /*elem.css({
+                 top: y + 'px',
+                 left:  x + 'px'
+                 });*/
                 elem.css({
-                    top: y + 'px',
-                    left:  x + 'px'
+                    "transform" : "translate(" + x + "px, " + y + "px) scale(" + scope.zoomLevel + ", " + scope.zoomLevel + ")"
                 });
             }
 
@@ -383,10 +514,21 @@ comiccloudapp.directive('comicPageImg', function($window, $document) {
                 $document.off('mouseup', mouseup);
             }
 
+            //Zoom
+            /*angular.element("body").on("keydown keypress", function (event) {
+             if(elem.hasClass("active")){
+             console.log('tap');
+             }
+             //console.log('key down');
+             });*/
+
+
 
         }
     }
 });
+
+
 
 comiccloudapp.directive('loadingScreen', function() {
     return {
@@ -400,30 +542,6 @@ comiccloudapp.directive('loadingScreen', function() {
                 console.log('%c Reader Status has changed to: ' + scope.readerStatus, 'background: #222; color: #bada55');
             });
 
-        }
-    }
-});
-
-comiccloudapp.directive('comicReaderControls', function() {
-    return {
-        restrict: 'E',
-        replace: true,
-        templateUrl: "./views/partials/comicReaderControls.html",
-        link: function (scope, elem, attrs) {
-
-        }
-    }
-});
-
-comiccloudapp.directive('comicReader', function($window){
-    return {
-        restrict: 'E',
-        replace: true,
-        templateUrl: "./views/partials/comicReader.html",
-        link: function (scope, elem, attrs) {
-            //setTimeout(function(){console.log(scope.comicLength);}, 3000);
-            //console.log(scope);
-            //setTimeout(function(){console.log(scope.currentlyLoaded);}, 3000);
         }
     }
 });

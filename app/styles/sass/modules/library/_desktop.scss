@@ -3,7 +3,7 @@
     margin: 100px auto;
     width:80%;
     max-width:1600px;
-    min-height: 800px;
+    min-height: calc(100vh - 200px);
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
