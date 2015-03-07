@@ -306,6 +306,7 @@ comiccloudapp.directive('comicCoverImg', function($window) {
                 angular.element(this).removeClass('imgHide').siblings('img.comicHoldingImage').addClass('imgHide');
                 console.log('image loaded @ ' + attrs.imageId);
             });
+
             /*setTimeout(function(){
                 scope.$apply(function () {
                     elem.attr("ng-src", attrs.waiting);
@@ -324,95 +325,99 @@ comiccloudapp.directive('comicReader', function($window, $document){
         transclude: true,
         templateUrl: "./views/partials/comicReader.html",
         controller: function($scope) {
-            $scope.readerStatus = "loading";
+            $scope.readerStatus = "initial-loading";
 
             //$scope.page = 1;
             $scope.currentPage = 1;
             $scope.zoomLevel = 1;
             $scope.currentComic = [];
+            $scope.currentlyLoaded = 0;
+            $scope.loadTarget = 0;
+            var loadingOffset = 6;
 
             $scope.loadPages = function(start, end){
+                //if($scope.readerStatus == 'loading' || $scope.readerStatus == 'initial-loading' && $scope.currentlyLoaded != $scope.loadTarget) return;
+                if($scope.currentlyLoaded != $scope.loadTarget) return;
                 console.log('loading pages from: ' + start + ' to: ' + end);
-                $scope.readerStatus = 'loading-more';
+                $scope.loadTarget = end;
+                if(start !== 1) $scope.readerStatus = 'loading';
 
                 for (var i = start; i <= end; i++) {
                     if(i < $scope.comicLength) {
                         $scope.currentComic.push($scope.comic.comic_collection[i]);
-                        if (!$scope.$$phase) $scope.$apply(); //TODO: This is pretty hacky. Please fix.
+                        if (!$scope.$$phase) $scope.$apply(); //TODO: Find a better way to do this.
                     }
                 }
             };
+
             $scope.incrementCurrentlyLoaded = function(){
                 $scope.currentlyLoaded++;
                 if($scope.currentlyLoaded == $scope.loadTarget){
-                    console.log('Reader Status: ready');
+                    //console.log('Reader Status: ready');
                     $scope.readerStatus = 'ready';
                 }
-            }
-
-            /*$scope.changePage = function (value) {
-                if($scope.readerStatus == 'loading'){
-
-                }else{
-
-                    page += value;
-                    page = Math.min(Math.max(page, 1), $scope.comicLength);
-                    angular.element("#comicReader .comicImg").removeClass('active');
-                    angular.element("#comicReader .comicImg:nth-child(" + page + ")").addClass('active');
-
-                    if((page + 2) == $scope.currentlyLoaded && $scope.readerStatus != 'loading-more'){
-                        $scope.loadPages($scope.currentlyLoaded + 1, $scope.currentlyLoaded + 1 + initialLoad);
-                    }
-                }
+                if (!$scope.$$phase) $scope.$apply(); //TODO: Find a better way to do this.
             };
 
-            var handler = function(e){
-                if(e.keyCode === 37) {//Left
-                    $scope.changePage(-1);
-                }
-                if(e.keyCode === 39) {//Right
-                    $scope.changePage(1);
-                }
-                if(e.keyCode === 83) {//S - For Status
-                    //console.log($scope.currentPage);
-                    //console.log($scope.readerStatus);
-                    console.log('Currently Loaded: ' + $scope.currentlyLoaded);
-                    console.log('Page No: ' +page);
-                    console.log($scope.currentComic);
-                }
-                if(e.keyCode === 90){
-                    $scope.zoomLevel++;
-                    console.log($scope.zoomLevel);
-                }
+            $scope.changePage = function(value){
+                $scope.currentPage += value;
+                $scope.currentPage = Math.min(Math.max($scope.currentPage, 1), $scope.comicLength);
+
+                if(($scope.currentPage + 2) == $scope.currentlyLoaded) $scope.loadPages(($scope.currentlyLoaded + 1), (($scope.currentlyLoaded + 1 ) + loadingOffset));
+
+                if (!$scope.$$phase) $scope.$apply(); //TODO: Find a better way to do this.
             };
-
-            var $doc = angular.element(document);
-
-            $doc.on('keydown', handler);
-
-            $scope.$on('$destroy',function(){
-                $doc.off('keydown', handler);
-            });*/
 
         },
         link: function (scope, elem, attrs) {
+
+            angular.element(document).on("keyup", function (e) {
+                if(e.keyCode === 37) {//Left
+                    changePage(-1);
+                }
+                if(e.keyCode === 39) {//Right
+                    changePage(+1);
+                }
+                if(e.keyCode === 90){//Z
+                    zoomPage(+1);
+                }
+                if(e.keyCode === 88){//X
+                    zoomPage(-1);
+                }
+
+            });
+
+            scope.$watch('currentPage', function() {
+                //console.log('Reader Status has changed.');
+                console.log("Current Page: " + scope.currentPage);
+            });
+
+            scope.$watch('currentlyLoaded', function() {
+                //console.log('Reader Status has changed.');
+                console.log("Currently Loaded: " + scope.currentlyLoaded);
+            });
+
+            
             var changePage = function(value){
-                if(scope.readerStatus == 'loading'){
+                var currentPage = scope.currentPage;
+                if(currentPage == scope.comicLength){
+                    console.log("you're at the end");
+                }else if((currentPage + value) == scope.currentlyLoaded && scope.readerStatus == 'loading' || scope.readerStatus == 'initial-loading'){
+
+                    console.log('step away from the edge... Take a breather.');
 
                 }else{
-                    scope.page += value;
-                    scope.page = Math.min(Math.max(page, 1), $scope.comicLength);
+                    scope.changePage(value);
+                    var nextPage = scope.currentPage;
+                    if (currentPage != nextPage) angular.element("#comicReader .comicImg.active").css('transform', '');
                     angular.element("#comicReader .comicImg").removeClass('active');
-                    angular.element("#comicReader .comicImg:nth-child(" + page + ")").addClass('active');
-
-                    //if((page + 2) == $scope.currentlyLoaded && $scope.readerStatus != 'loading-more'){
-                        //$scope.loadPages($scope.currentlyLoaded + 1, $scope.currentlyLoaded + 1 + initialLoad);
-                    //}
+                    angular.element("#comicReader .comicImg:nth-child(" + nextPage + ")").addClass('active');
                 }
-            }
-            angular.element("body").on("keyup", function (event) {
-                console.log('zoom');
-            });
+            };
+
+            var zoomPage = function(value){
+
+            };
         }
 
     }
@@ -513,17 +518,6 @@ comiccloudapp.directive('comicPageImg', function($window, $document) {
                 $document.off('mousemove', mousemove);
                 $document.off('mouseup', mouseup);
             }
-
-            //Zoom
-            /*angular.element("body").on("keydown keypress", function (event) {
-             if(elem.hasClass("active")){
-             console.log('tap');
-             }
-             //console.log('key down');
-             });*/
-
-
-
         }
     }
 });
@@ -537,7 +531,6 @@ comiccloudapp.directive('loadingScreen', function() {
         template: '<div class="loadingScreen"></div>',
         link: function (scope, elem, attrs) {
             scope.$watch('readerStatus', function() {
-
                 //console.log('Reader Status has changed.');
                 console.log('%c Reader Status has changed to: ' + scope.readerStatus, 'background: #222; color: #bada55');
             });
