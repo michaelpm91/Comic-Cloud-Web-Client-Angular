@@ -306,19 +306,12 @@ comiccloudapp.directive('comicCoverImg', function($window) {
                 angular.element(this).removeClass('imgHide').siblings('img.comicHoldingImage').addClass('imgHide');
                 console.log('image loaded @ ' + attrs.imageId);
             });
-
-            /*setTimeout(function(){
-                scope.$apply(function () {
-                    elem.attr("ng-src", attrs.waiting);
-                });
-            }, 3000);*/
-
         }
     }
 });
 
 
-comiccloudapp.directive('comicReader', function($window, $document){
+comiccloudapp.directive('comicReader', function($window, $document, $location){
     return {
         restrict: 'E',
         replace: true,
@@ -333,10 +326,15 @@ comiccloudapp.directive('comicReader', function($window, $document){
             $scope.currentComic = [];
             $scope.currentlyLoaded = 0;
             $scope.loadTarget = 0;
+
+            $scope.currentImagePosition = {'x': 0, 'y' : 0};
             var loadingOffset = 6;
+            var minZoomLevel = 1;
+            var maxZoomLevel = 7;
+
+
 
             $scope.loadPages = function(start, end){
-                //if($scope.readerStatus == 'loading' || $scope.readerStatus == 'initial-loading' && $scope.currentlyLoaded != $scope.loadTarget) return;
                 if($scope.currentlyLoaded != $scope.loadTarget) return;
                 console.log('loading pages from: ' + start + ' to: ' + end);
                 $scope.loadTarget = end;
@@ -359,12 +357,23 @@ comiccloudapp.directive('comicReader', function($window, $document){
                 if (!$scope.$$phase) $scope.$apply(); //TODO: Find a better way to do this.
             };
 
-            $scope.changePage = function(value){
+            $scope.updatePage = function(value){
                 $scope.currentPage += value;
                 $scope.currentPage = Math.min(Math.max($scope.currentPage, 1), $scope.comicLength);
 
                 if(($scope.currentPage + 2) == $scope.currentlyLoaded) $scope.loadPages(($scope.currentlyLoaded + 1), (($scope.currentlyLoaded + 1 ) + loadingOffset));
 
+                if (!$scope.$$phase) $scope.$apply(); //TODO: Find a better way to do this.
+            };
+            $scope.updateZoomLevel = function(value){
+                $scope.zoomLevel += value;
+                $scope.zoomLevel = Math.min(Math.max($scope.zoomLevel, minZoomLevel), maxZoomLevel);
+                if (!$scope.$$phase) $scope.$apply(); //TODO: Find a better way to do this.
+            };
+
+            $scope.updateImagePosition = function (x, y){
+                $scope.currentImagePosition.x = x;
+                $scope.currentImagePosition.y = y;
                 if (!$scope.$$phase) $scope.$apply(); //TODO: Find a better way to do this.
             };
 
@@ -373,16 +382,23 @@ comiccloudapp.directive('comicReader', function($window, $document){
 
             angular.element(document).on("keyup", function (e) {
                 if(e.keyCode === 37) {//Left
-                    changePage(-1);
+                    scope.changePage(-1);
                 }
                 if(e.keyCode === 39) {//Right
-                    changePage(+1);
+                    scope.changePage(+1);
                 }
                 if(e.keyCode === 90){//Z
-                    zoomPage(+1);
+                    scope.zoomPage(+1);
                 }
                 if(e.keyCode === 88){//X
-                    zoomPage(-1);
+                    scope.zoomPage(-1);
+                }
+                if(e.keyCode === 27){//Esc
+                    //Not convinced any of this is necessary
+                    $location.path('/s/' + scope.comic.series.id);
+                    if(!scope.$$phase) scope.$apply(); //TODO: Find a better way to do this.
+
+                    console.log('change to: ' + '/s/' + scope.comic.series.id );
                 }
 
             });
@@ -397,8 +413,8 @@ comiccloudapp.directive('comicReader', function($window, $document){
                 console.log("Currently Loaded: " + scope.currentlyLoaded);
             });
 
-            
-            var changePage = function(value){
+
+            scope.changePage = function(value){
                 var currentPage = scope.currentPage;
                 if(currentPage == scope.comicLength){
                     console.log("you're at the end");
@@ -407,19 +423,31 @@ comiccloudapp.directive('comicReader', function($window, $document){
                     console.log('step away from the edge... Take a breather.');
 
                 }else{
-                    scope.changePage(value);
+                    scope.updatePage(value);
                     var nextPage = scope.currentPage;
                     if (currentPage != nextPage) angular.element("#comicReader .comicImg.active").css('transform', '');
-                    angular.element("#comicReader .comicImg").removeClass('active');
+                    angular.element("#comicReader .comicImg").removeClass('active grab');
+                    scope.updateZoomLevel();//TODO: Change function to accept resets.
                     angular.element("#comicReader .comicImg:nth-child(" + nextPage + ")").addClass('active');
                 }
             };
 
-            var zoomPage = function(value){
+            scope.zoomPage = function(value){
+                var currentZoomLevel = scope.zoomLevel;
+                scope.updateZoomLevel(value);
+                var newZoomLevel = scope.zoomLevel;
+                var tmp = angular.element("#comicReader .comicImg.active");
+                //tmp.css('transform',"scale(" + newZoomLevel + "," + newZoomLevel + ")");
+                //angular.element('#comicReader .comicImg.active.imgZoom').css('transform',"scale(" + newZoomLevel + "," + newZoomLevel + ")");
 
+                if(newZoomLevel == 1){
+                    scope.updateImagePosition(0,0);
+                    tmp.css("transform","translate(0px, 0px) scale(" + newZoomLevel + ", " + newZoomLevel + ")");
+                }else{
+                    tmp.css("transform","translate(" + scope.currentImagePosition.x + "px, " + scope.currentImagePosition.y + "px)  scale(" + newZoomLevel + ", " + newZoomLevel + ")");
+                }
             };
         }
-
     }
 });
 
@@ -455,13 +483,14 @@ comiccloudapp.directive('comicPageImg', function($window, $document) {
             //Draggable
             var startX = 0, startY = 0, x = 0, y = 0;
             elem.css({
-                //position: 'relative',
+                position: 'relative',
                 //border: '1px solid red',
-                cursor: 'pointer'
+                //cursor: 'pointer'
             });
 
             elem.on('mousedown', function(event) {
                 // Prevent default dragging of selected content
+                elem.addClass('grab');
                 event.preventDefault();
                 startX = event.pageX - x;
                 startY = event.pageY - y;
@@ -470,51 +499,61 @@ comiccloudapp.directive('comicPageImg', function($window, $document) {
             });
 
             function mousemove(event) {
-                y = event.pageY - startY;
-                x = event.pageX - startX;
+                if(scope.zoomLevel > 0) {
+                    y = event.pageY - startY;
+                    x = event.pageX - startX;
 
-                var maskWidth  = angular.element("#comicReader").width();//$("#my-mask").width();
-                var maskHeight = angular.element("#comicReader").height();//$("#my-mask").height();
-                var imgPos     = elem.offset();//$("#my-image").offset();
-                var imgWidth   = elem.width();//$("#my-image").width();
-                var imgHeight  = elem.height();//$("#my-image").height();
+                    var maskWidth = angular.element("#comicReader").width();
+                    var maskHeight = angular.element("#comicReader").height();
+                    var imgPos = elem.offset();
+                    var imgWidth = (elem.width() * (scope.zoomLevel > 0 ? scope.zoomLevel : 1 ));
+                    var imgHeight = (elem.height() * (scope.zoomLevel > 0 ? scope.zoomLevel : 1 ));
 
-                var x1 = imgPos.left;
-                var y1 = imgPos.top;
-                var x2 = (imgPos.left + maskWidth) - imgWidth;
-                var y2 = (imgPos.top + maskHeight) - imgHeight;
+                    var x1 = imgPos.left;
+                    var y1 = imgPos.top;
+                    var x2 = imgPos.left + imgWidth;
+                    var y2 = imgPos.top + imgHeight;
+                    //var x2 = (imgPos.left + maskWidth) - (imgWidth * (scope.zoomLevel >= 1 ? scope.zoomLevel : 1 ));
+                    //var y2 = (imgPos.top + maskHeight) - (imgHeight * (scope.zoomLevel >= 1 ? scope.zoomLevel : 1 ));
 
-                //if( y1 >= 0 || y2 <= 0) y = 0;
+                    //Lock X axis if image isn't greater than container
+                    //if(imgWidth < maskWidth) x = 0;
 
-                //if( x1 + imgWidth > maskWidth ) console.log('right');//x = maskWidth + imgWidth;
-                //if (x2 <= 0) x = 0;
-                //if( x1 <= -1) x = 0 - ((maskWidth /2 ) - (imgWidth / 2));//(0 - (imgWidth * 2.5));
-                //if (x2 <= 0) x = 0;
-                /*evt = evt || window.event;
-                 var posX = evt.clientX,
-                 posY = evt.clientY,
-                 aX = posX - diffX,
-                 aY = posY - diffY;
-                 if (aX < 0) aX = 0;
-                 if (aY < 0) aY = 0;
-                 if (aX + eWi > cWi) aX = cWi - eWi;
-                 if (aY + eHe > cHe) aY = cHe -eHe;
-                 mydragg.move(divid,aX,aY);*/
+                    //if(x1 > (maskWidth/2)) x = maskWidth/2;
+                    //if(x1 < 0) x1 = 0;
+                    //if (scope.zoomLevel == 1) {
+                        //if (imgWidth < maskWidth) x = 0;
+                        //x = y= 0;
+                    //} else {
 
-                //if( x2 == maskWidth) x = maskWidth;
+                        if (x >= (maskWidth / 2) - (imgWidth / 2)) {
+                            x = (maskWidth / 2) - (imgWidth / 2) - 1;
+                        }
+                        if (x <= (0 - maskWidth / 2) + (imgWidth / 2)) {
+                            x = (0 - maskWidth / 2) + (imgWidth / 2) + 1;
+                        }
+                        //Lock X axis if image isn't greater than container
+                        //if(imgWidth < maskWidth) x = 0;
 
-                console.log('x:' + x + ' y:' + y + ' x1: '+ x1 +' y1: ' + y1 + ' x2: ' + x2 + ' y2: '+ y2);
+                        if(y <= (maskHeight/2) - (imgHeight/2)){
+                            y = (maskHeight/2) - (imgHeight/2);
+                        }
+                        if(y >= (imgHeight/2) - (maskHeight/2)){
+                            y =  (imgHeight/2) - (maskHeight/2);
+                        }
+                    //}
 
-                /*elem.css({
-                 top: y + 'px',
-                 left:  x + 'px'
-                 });*/
-                elem.css({
-                    "transform" : "translate(" + x + "px, " + y + "px) scale(" + scope.zoomLevel + ", " + scope.zoomLevel + ")"
-                });
+                    //if(imgWidth * scope.zoomLevel < maskWidth)
+                    console.log('x:' + x + ' y:' + y + ' x1: ' + x1 + ' y1: ' + y1 + ' x2: ' + x2 + ' y2: ' + y2);
+
+                    elem.css({
+                        "transform": "translate(" + x + "px, " + y + "px) scale(" + scope.zoomLevel + ", " + scope.zoomLevel + ")"
+                    });
+                }
             }
 
             function mouseup() {
+                elem.removeClass('grab');
                 $document.off('mousemove', mousemove);
                 $document.off('mouseup', mouseup);
             }

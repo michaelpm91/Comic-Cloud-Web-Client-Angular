@@ -11,9 +11,16 @@
     margin: auto;
     display: none;
     height: 100%;
+    //cursor: pointer;
+    @include grab-cursor;
+  }
+  #comicReader .comicImg.grab{
+    @include grabbing-cursor;
   }
   #comicReader .comicImg.active{
     display:block;
+    //transform-origin: left top 0px;
+    //@include transition(transform, 0.5s, ease-in-out);
   }
 
 }
