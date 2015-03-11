@@ -366,8 +366,12 @@ comiccloudapp.directive('comicReader', function($window, $document, $location){
                 if (!$scope.$$phase) $scope.$apply(); //TODO: Find a better way to do this.
             };
             $scope.updateZoomLevel = function(value){
-                $scope.zoomLevel += value;
-                $scope.zoomLevel = Math.min(Math.max($scope.zoomLevel, minZoomLevel), maxZoomLevel);
+                if(value == 'reset'){
+                    $scope.zoomLevel = 1;
+                }else {
+                    $scope.zoomLevel += value;
+                    $scope.zoomLevel = Math.min(Math.max($scope.zoomLevel, minZoomLevel), maxZoomLevel);
+                }
                 if (!$scope.$$phase) $scope.$apply(); //TODO: Find a better way to do this.
             };
 
@@ -433,7 +437,7 @@ comiccloudapp.directive('comicReader', function($window, $document, $location){
                     var nextPage = scope.currentPage;
                     if (currentPage != nextPage) angular.element("#comicReader .comicImg.active").css('transform', '');
                     angular.element("#comicReader .comicImg").removeClass('active grab');
-                    scope.updateZoomLevel();//TODO: Change function to accept resets.
+                    scope.updateZoomLevel('reset');
                     angular.element("#comicReader .comicImg:nth-child(" + nextPage + ")").addClass('active');
                 }
             };
@@ -569,19 +573,30 @@ comiccloudapp.directive('comicPageImg', function($window, $document) {
 
 
 
-comiccloudapp.directive('loadingScreen', function() {
+comiccloudapp.directive('readerLoadingScreen', function() {
     return {
         restrict: 'E',
         replace: true,
-        template: '<div class="loadingScreen"></div>',
+        template: '<div class="readerLoadingScreen"></div>',
+        require: '^comicReader',
         link: function (scope, elem, attrs) {
+            var rls = angular.element('.readerLoadingScreen');
             scope.$watch('readerStatus', function() {
                 //console.log('Reader Status has changed.');
                 console.log('%c Reader Status has changed to: ' + scope.readerStatus, 'background: #222; color: #bada55');
-                if(scope.readerStatus == "loading") console.log('activate loading screen');
-                else if(scope.readerStatus == "ready") console.log('deactivate loading screen');
-                else if(scope.readerSatus == "initial-loading") console.log('activate loading screen');
-                else console.log('nothing to report today captain')
+
+                if(scope.readerStatus == "initial-loading"){
+                    rls.fadeIn();
+                    console.log('activate loading screen');
+                }else if(scope.readerStatus == "loading"){
+                    rls.fadeIn();
+                    console.log('activate loading screen');
+                }else if(scope.readerStatus == "ready"){
+                    rls.fadeOut();
+                    console.log('deactivate loading screen');
+                }else{
+                    console.log('nothing to report today captain')
+                }
             });
 
         }

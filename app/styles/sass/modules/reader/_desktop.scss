@@ -5,22 +5,39 @@
     width: 100vw;
     overflow: hidden;
     position: relative;
-  }
+    .comicImg {
+      margin: auto;
+      display: none;
+      height: 100%;
+      //cursor: pointer;
+      @include grab-cursor;
+    }
+    .comicImg.grab {
+      @include grabbing-cursor;
+    }
+    .comicImg.active {
+      display: block;
+      //transform-origin: left top 0px;
+      //@include transition(transform, 0.5s, ease-in-out);
+    }
+    .readerLoadingScreen{
+      display: none;
+      z-index: 9999;
+      width: 100vw;
+      height: 100vh;
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      bottom: 0;
+      background-image: url('../../../../images/ajax-loader.gif');
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-position: center;
+      background-color: black;
+      @include opacity(0.8);
 
-  #comicReader .comicImg{
-    margin: auto;
-    display: none;
-    height: 100%;
-    //cursor: pointer;
-    @include grab-cursor;
-  }
-  #comicReader .comicImg.grab{
-    @include grabbing-cursor;
-  }
-  #comicReader .comicImg.active{
-    display:block;
-    //transform-origin: left top 0px;
-    //@include transition(transform, 0.5s, ease-in-out);
-  }
+    }
 
+  }
 }
