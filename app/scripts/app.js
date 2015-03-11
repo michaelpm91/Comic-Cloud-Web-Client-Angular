@@ -380,6 +380,12 @@ comiccloudapp.directive('comicReader', function($window, $document, $location){
         },
         link: function (scope, elem, attrs) {
 
+            elem.focus();//Make sure user can navigate straight away.
+
+            elem.click(function(){//Consider moving this over to an ng-click directive.
+                angular.element('.menu-comic, .menu-comic-nav').fadeToggle('150');
+            });
+
             angular.element(document).on("keyup", function (e) {
                 if(e.keyCode === 37) {//Left
                     scope.changePage(-1);
@@ -572,6 +578,10 @@ comiccloudapp.directive('loadingScreen', function() {
             scope.$watch('readerStatus', function() {
                 //console.log('Reader Status has changed.');
                 console.log('%c Reader Status has changed to: ' + scope.readerStatus, 'background: #222; color: #bada55');
+                if(scope.readerStatus == "loading") console.log('activate loading screen');
+                else if(scope.readerStatus == "ready") console.log('deactivate loading screen');
+                else if(scope.readerSatus == "initial-loading") console.log('activate loading screen');
+                else console.log('nothing to report today captain')
             });
 
         }

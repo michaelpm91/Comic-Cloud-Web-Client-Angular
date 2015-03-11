@@ -20,11 +20,13 @@
   border-bottom: solid 2px #DCDCDC;
 }
 .menu.menu-comic{
+  display: none;
   @include opacity(0.8);
   top: 0;
   //border-bottom: solid 2px #DCDCDC;
 }
 .menu.menu-comic-nav{
+  display: none;
   @include opacity(0.8);
   bottom: 0;
   //border-top: solid 2px #DCDCDC;
