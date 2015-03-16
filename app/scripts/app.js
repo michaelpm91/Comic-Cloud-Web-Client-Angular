@@ -449,6 +449,10 @@ comiccloudapp.directive('comicReader', function($window, $document, $location){
                     if (activeImage.height() > angular.element(this).height()) activeImage.toggleClass('mobileFillHeight mobileFillWidth');
                     else if (activeImage.width() > angular.element(this).width()) activeImage.toggleClass('mobileFillWidth mobileFillHeight');
 
+                }else if(angular.element(this).width() >= 641 && angular.element(this).width() <= 1199){
+                    var activeImage = angular.element("#comicReader .comicImg.active");
+                    if (activeImage.height() > angular.element(this).height()) activeImage.toggleClass('tabletFillHeight tabletFillWidth');
+                    else if (activeImage.width() > angular.element(this).width()) activeImage.toggleClass('tabletFillWidth tabletFillHeight');
                 }
             });
 
