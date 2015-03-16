@@ -2,6 +2,6 @@
 @import "../global";
 $breakup-included-blocks: ('mobile' 'tablet' 'desktop');
 @import "base";
-@import "tablet";
+@import "mobile";
 @import "tablet";
 @import "desktop";

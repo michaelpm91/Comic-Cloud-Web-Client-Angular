@@ -5,6 +5,23 @@
 */
 
 @include breakup-breakpoint('mobile') {
+  #comicReader {
+    .comicImg {
+      margin: auto;
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      &.mobileFillWidth {
+        width: 100%;
+        height: auto;
+      }
+      &.mobileFillHeight {
+        height: 100%;
+        width: auto;
+      }
+    }
 
-
+  }
 }

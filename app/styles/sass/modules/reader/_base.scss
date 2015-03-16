@@ -1,8 +1,37 @@
 /**
  * Base styling.
  */
-body.reader{
+
+#comicReader {
+  //background: black;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  position: relative;
+  .comicImg {
+    margin: auto;
+    display: none;
+    height: 100%;
+  }
+  .comicImg.active {
+    display: block;
+  }
+  .readerLoadingScreen{
+    display: none;
+    z-index: 9999;
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    background-image: url('../../../../images/ajax-loader.gif');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    background-color: black;
+    @include opacity(0.8);
+
+  }
 }
-/*.menu-library{
-  display: none !important;
-}*/
