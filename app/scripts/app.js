@@ -394,14 +394,14 @@ comiccloudapp.directive('comicReader', function($window, $document, $location){
         },
         link: function (scope, elem, attrs) {
 
-            var activePage = angular.element("#comicReader .comicImg.active");
             var startX = 0, startY = 0, x = 0, y = 0;
 
             var keyPanSpeed = 10;
 
             elem.focus();//Make sure user can navigate straight away.
 
-            elem.click(function(){//Consider moving this over to an ng-click directive.
+            elem.click(function(e){//Consider moving this over to an ng-click directive.
+                if(e.target != this) return;//TODO: This only allow clicks directly on reader. Is this the desired behaviour?
                 angular.element('.menu-comic, .menu-comic-nav').fadeToggle('150');
             });
 
@@ -443,7 +443,7 @@ comiccloudapp.directive('comicReader', function($window, $document, $location){
                 }
             });
 
-            angular.element(window).on('resize', function(){
+            angular.element(window).on('resize', function(){//Image Fit
                 if(angular.element(this).width() <= 640) {
                     var activeImage = angular.element("#comicReader .comicImg.active");
                     if (activeImage.height() > angular.element(this).height()) activeImage.toggleClass('mobileFillHeight mobileFillWidth');
@@ -456,12 +456,10 @@ comiccloudapp.directive('comicReader', function($window, $document, $location){
                 }
             });
 
-            activePage.css({
-                position: 'relative'
-            });
 
-            activePage.on('mousedown', function(event) {
-                console.log('mosue down');
+            angular.element("#comicReader").on('mousedown', ".comicImg.active", function(event) {//Event delegation ;)
+                angular.element(this).addClass('grab');
+
                 event.preventDefault();
                 startX = event.pageX - x;
                 startY = event.pageY - y;
@@ -470,19 +468,52 @@ comiccloudapp.directive('comicReader', function($window, $document, $location){
             });
 
 
-
-
-
-            function mousemove(event){
+            /*function mousemove(event){
                 console.log('mouse move');
                 event.preventDefault();
                 startX = event.pageX - x;
                 startY = event.pageY - y;
                 $document.on('mousemove', mousemove);
                 $document.on('mouseup', mouseup);
+            }*/
+
+            function mousemove(event) {
+                if(scope.zoomLevel > 0) {
+                    y = event.pageY - startY;
+                    x = event.pageX - startX;
+
+                    var maskWidth = angular.element("#comicReader").width();
+                    var maskHeight = angular.element("#comicReader").height();
+                    var imgPos = elem.offset();
+                    var imgWidth = (elem.width() * (scope.zoomLevel > 0 ? scope.zoomLevel : 1 ));
+                    var imgHeight = (elem.height() * (scope.zoomLevel > 0 ? scope.zoomLevel : 1 ));
+
+                    var x1 = imgPos.left;
+                    var y1 = imgPos.top;
+                    var x2 = imgPos.left + imgWidth;
+                    var y2 = imgPos.top + imgHeight;
+
+
+                    if (x >= (maskWidth / 2) - (imgWidth / 2)) {
+                        x = (maskWidth / 2) - (imgWidth / 2) - 1;
+                    }
+                    if (x <= (0 - maskWidth / 2) + (imgWidth / 2)) {
+                        x = (0 - maskWidth / 2) + (imgWidth / 2) + 1;
+                    }
+                    if(y <= (maskHeight/2) - (imgHeight/2)){
+                        y = (maskHeight/2) - (imgHeight/2);
+                    }
+                    if(y >= (imgHeight/2) - (maskHeight/2)){
+                        y =  (imgHeight/2) - (maskHeight/2);
+                    }
+
+
+                    scope.movePage(x, y, "addsub");
+                }
             }
 
             function mouseup() {
+                angular.element("#comicReader .comicImg.active").removeClass('grab');
                 $document.off('mousemove', mousemove);
                 $document.off('mouseup', mouseup);
             }
@@ -495,11 +526,6 @@ comiccloudapp.directive('comicReader', function($window, $document, $location){
             scope.$watch('currentlyLoaded', function() {
                 //console.log('Reader Status has changed.');
                 console.log("Currently Loaded: " + scope.currentlyLoaded);
-            });
-
-            scope.$watch('comicLength', function() {
-                //console.log('Reader Status has changed.');
-                console.log("Comic Length: " + scope.comicLength);
             });
 
             scope.changePage = function(value){
@@ -562,7 +588,7 @@ comiccloudapp.directive('comicPageImg', function($window, $document) {
     return {
         restrict: 'E',
         replace: true,
-        //require: '^comicReader',
+        require: '^comicReader',
         template: '<img class="comicImg" ng-src="{{env_var.apiBase}}{{imageId}}/{{imageSize}}?access_token={{cookies.access_token}}">',
         link: function(scope, elem, attrs) {
 

@@ -1,10 +1,8 @@
 @include breakup-breakpoint('desktop') {
   #comicReader {
     .comicImg {
-      @include grab-cursor;
     }
     .comicImg.grab {
-      @include grabbing-cursor;
     }
     .comicImg.active {
 

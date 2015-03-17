@@ -12,6 +12,11 @@
     margin: auto;
     display: none;
     height: 100%;
+    position: relative;
+    @include grab-cursor;
+  }
+  .comicImg.grab {
+    @include grabbing-cursor;
   }
   .comicImg.active {
     display: block;
