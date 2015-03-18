@@ -138,7 +138,7 @@ comiccloudapp.filter('object2Array', function() {
  * Constants
  */
 comiccloudapp.constant( 'env_var', {
-    apiBase : 'http://api.dev.comiccloud.io/v1',
+    apiBase : 'http://api.dev.comiccloud.io/v0.1',
     clientBase : '',
     imgHolder : '/images/comicHolder.gif'
 });
@@ -299,9 +299,10 @@ comiccloudapp.directive('comicCoverImg', function($window) {
     return {
         restrict: 'E',
         replace: true,
-        template: '<img class="comicImg imgHide" ng-src="{{env_var.apiBase}}{{imageId}}/{{imageSize}}?access_token={{cookies.access_token}}">',
+        template: '<img class="stuff comicImg imgHide" ng-src="{{env_var.apiBase}}{{imageId}}{{imageSize ?  \'/\' + imageSize  : \'\'}}?access_token={{cookies.access_token}}">',
         link: function (scope, elem, attrs) {
             scope.imageId = attrs.imageId;
+            scope.imageSize = 450;//TODO: Move to constant...
             elem.bind('load', function () {
                 angular.element(this).removeClass('imgHide').siblings('img.comicHoldingImage').addClass('imgHide');
                 console.log('image loaded @ ' + attrs.imageId);
