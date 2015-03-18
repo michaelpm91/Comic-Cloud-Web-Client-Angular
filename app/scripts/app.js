@@ -394,6 +394,7 @@ comiccloudapp.directive('comicReader', function($window, $document, $location){
             var startX = 0, startY = 0, x = 0, y = 0;
 
             var keyPanSpeed = 10;
+            var scrollPanSpeed = 1;
 
             elem.focus();//Make sure user can navigate straight away.
 
@@ -437,14 +438,14 @@ comiccloudapp.directive('comicReader', function($window, $document, $location){
                     scope.movePage(scope.currentImagePosition.x, scope.currentImagePosition.y - keyPanSpeed);
                 }
             });
+
             angular.element(document).on('mousewheel', function(event) {
                 if(event.deltaY > 0) {
-                    scope.movePage(scope.currentImagePosition.x, scope.currentImagePosition.y + (1 * event.deltaY ));
+                    scope.movePage(scope.currentImagePosition.x, scope.currentImagePosition.y + (scrollPanSpeed * event.deltaY ));
                 }else{
-                    scope.movePage(scope.currentImagePosition.x, scope.currentImagePosition.y + (1 *  event.deltaY ));
+                    scope.movePage(scope.currentImagePosition.x, scope.currentImagePosition.y + (scrollPanSpeed *  event.deltaY ));
                 }
             });
-
 
             angular.element(window).on('resize', function(){//Image Fit
                 if(angular.element(this).width() <= 640) {
@@ -458,7 +459,6 @@ comiccloudapp.directive('comicReader', function($window, $document, $location){
                     else if (activeImage.width() > angular.element(this).width()) activeImage.toggleClass('tabletFillWidth tabletFillHeight');
                 }
             });
-
 
             angular.element("#comicReader").on('mousedown', ".comicImg.active", function(event) {//Event delegation ;)
                 angular.element(this).addClass('grab');
@@ -534,10 +534,10 @@ comiccloudapp.directive('comicReader', function($window, $document, $location){
 
                 var maskWidth = angular.element("#comicReader").width();
                 var maskHeight = angular.element("#comicReader").height();
-                var elem = angular.element("#comicReader .comicImg.active");
-                var imgPos = elem.offset();
-                var imgWidth = (elem.width() * (scope.zoomLevel > 0 ? scope.zoomLevel : 1 ));
-                var imgHeight = (elem.height() * (scope.zoomLevel > 0 ? scope.zoomLevel : 1 ));
+                var tmp = angular.element("#comicReader .comicImg.active");
+                var imgPos = tmp.offset();
+                var imgWidth = (tmp.width() * (scope.zoomLevel > 0 ? scope.zoomLevel : 1 ));
+                var imgHeight = (tmp.height() * (scope.zoomLevel > 0 ? scope.zoomLevel : 1 ));
 
                 if (x >= (maskWidth / 2) - (imgWidth / 2)) {
                     x = (maskWidth / 2) - (imgWidth / 2) - 1;
@@ -600,88 +600,6 @@ comiccloudapp.directive('comicPageImg', function($window, $document) {
 
             });
 
-
-            //key move
-            /*angular.element(document).on("keyup", function (e) {
-                if (e.keyCode === 38) {//Up
-                    scope.changePage(-1);
-                }
-                if (e.keyCode === 40) {//Down
-                    scope.changePage(-1);
-                }
-            });
-
-            //Draggable
-            var startX = 0, startY = 0, x = 0, y = 0;
-            elem.css({
-                position: 'relative',
-                //border: '1px solid red',
-                //cursor: 'pointer'
-            });
-
-            elem.on('mousedown', function(event) {
-                // Prevent default dragging of selected content
-                elem.addClass('grab');
-                event.preventDefault();
-                startX = event.pageX - x;
-                startY = event.pageY - y;
-                $document.on('mousemove', mousemove);
-                $document.on('mouseup', mouseup);
-            });
-
-            function mousemove(event) {//TODO: Pass variables to function on constrain from there. Mouse move shouldn't worry about such things...
-                if(scope.zoomLevel > 0) {
-                    y = event.pageY - startY;
-                    x = event.pageX - startX;
-
-                    var maskWidth = angular.element("#comicReader").width();
-                    var maskHeight = angular.element("#comicReader").height();
-                    var imgPos = elem.offset();
-                    var imgWidth = (elem.width() * (scope.zoomLevel > 0 ? scope.zoomLevel : 1 ));
-                    var imgHeight = (elem.height() * (scope.zoomLevel > 0 ? scope.zoomLevel : 1 ));
-
-                    var x1 = imgPos.left;
-                    var y1 = imgPos.top;
-                    var x2 = imgPos.left + imgWidth;
-                    var y2 = imgPos.top + imgHeight;
-                    //var x2 = (imgPos.left + maskWidth) - (imgWidth * (scope.zoomLevel >= 1 ? scope.zoomLevel : 1 ));
-                    //var y2 = (imgPos.top + maskHeight) - (imgHeight * (scope.zoomLevel >= 1 ? scope.zoomLevel : 1 ));
-
-                    //Lock X axis if image isn't greater than container
-                    //if(imgWidth < maskWidth) x = 0;
-
-
-                    if (x >= (maskWidth / 2) - (imgWidth / 2)) {
-                        x = (maskWidth / 2) - (imgWidth / 2) - 1;
-                    }
-                    if (x <= (0 - maskWidth / 2) + (imgWidth / 2)) {
-                        x = (0 - maskWidth / 2) + (imgWidth / 2) + 1;
-                    }
-                    //Lock X axis if image isn't greater than container
-                    //if(imgWidth < maskWidth) x = 0;
-
-                    if(y <= (maskHeight/2) - (imgHeight/2)){
-                        y = (maskHeight/2) - (imgHeight/2);
-                    }
-                    if(y >= (imgHeight/2) - (maskHeight/2)){
-                        y =  (imgHeight/2) - (maskHeight/2);
-                    }
-
-
-                    //if(imgWidth * scope.zoomLevel < maskWidth)
-                    console.log('x:' + x + ' y:' + y + ' x1: ' + x1 + ' y1: ' + y1 + ' x2: ' + x2 + ' y2: ' + y2);
-
-                    elem.css({
-                        "transform": "translate(" + x + "px, " + y + "px) scale(" + scope.zoomLevel + ", " + scope.zoomLevel + ")"
-                    });
-                }
-            }
-
-            function mouseup() {
-                elem.removeClass('grab');
-                $document.off('mousemove', mousemove);
-                $document.off('mouseup', mouseup);
-            }*/
         }
     }
 });
