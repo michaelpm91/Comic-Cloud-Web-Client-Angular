@@ -304,7 +304,7 @@ comiccloudapp.directive('comicCoverImg', function($window) {
             scope.imageId = attrs.imageId;
             scope.imageSize = 450;//TODO: Move to constant...
             elem.bind('load', function () {
-                angular.element(this).removeClass('imgHide').siblings('img.comicHoldingImage').addClass('imgHide');
+                angular.element(this).fadeIn().css('display','block').removeClass('imgHide').siblings('img.comicHoldingImage').addClass('imgHide');//TODO Refactor this mess please.
                 console.log('image loaded @ ' + attrs.imageId);
             });
         }
